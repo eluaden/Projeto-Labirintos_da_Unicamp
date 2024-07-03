@@ -1,10 +1,10 @@
 import pickle
 import os
-# tem q ser chamado fora da pasta src***
+# tem q ser chamado fora da pasta src**
 def save_level(level_name,maze,enemies,items,player): 
-    
-    file_path = os.path.join("level/",level_name + ".pkl")
-    os.makedirs("level/", exist_ok=True) # cria o diretorio caso nao exista
+    #salva progresso de arquivos niveis, 
+    file_path = os.path.join("level_progress/",level_name + ".pkl")
+    os.makedirs("level_progress/", exist_ok=True) # cria o diretorio caso nao exista
 
     with open(file_path,"wb") as save:
         level = {
@@ -16,11 +16,14 @@ def save_level(level_name,maze,enemies,items,player):
 
         pickle.dump(level,save)
 
-def read_level(level_name) -> dict:
-    file_path = os.path.join("level/",level_name + ".pkl")
+def read_level_base(level_name) -> dict:
+    #le os arquivos base de niveis
+    file_path = os.path.join("level_base/",level_name + ".pkl")
     with open(file_path,"rb") as level:
         return pickle.load(level)
-
-
-
-save_level("teste",[],[],[],[])
+    
+def read_level_progress(level_name) -> dict:
+    #le os arquivos de progresso de niveis
+    file_path = os.path.join("level_progress/",level_name + ".pkl")
+    with open(file_path,"rb") as level:
+        return pickle.load(level)

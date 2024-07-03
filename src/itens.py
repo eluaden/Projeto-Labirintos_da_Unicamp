@@ -16,8 +16,8 @@ class Item:
 
 
 class Clock(Item):
-    def __init__(self, posicao) -> None:
-        super().__init__(posicao)
+    def __init__(self, posicao,on_inv = False) -> None:
+        super().__init__(posicao,on_inv)
     
     def special_action(self, player):
         # adiciona 5 segundos no temporizador do jogador
@@ -25,8 +25,8 @@ class Clock(Item):
 
 
 class Bomb(Item):
-    def __init__(self, posicao) -> None:
-        super().__init__(posicao)
+    def __init__(self, posicao,on_inv = False) -> None:
+        super().__init__(posicao,on_inv)
 
     def special_action(self, player):
         if not self._on_inv:
