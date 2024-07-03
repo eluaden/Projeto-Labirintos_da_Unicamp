@@ -22,7 +22,7 @@ def generate_maze(pos, maze, visited= None):
         new_x = pos[0] + move[0]
         new_y = pos[1] + move[1]
         
-        #linkando as partes em branco
+        #linkando as partes em branco(quebrando paredes entre elas)
         if move == (2, 0):
             maze[new_x - 1][new_y] = 0
         elif move == (-2, 0):
@@ -31,6 +31,7 @@ def generate_maze(pos, maze, visited= None):
             maze[new_x][new_y - 1] = 0
         elif move == (0, -2):
             maze[new_x][new_y + 1] = 0
+        
         generate_maze((new_x,new_y),maze,visited)
 
         #atualizando movimentos possiveis levando em conta a recursao
@@ -44,25 +45,47 @@ def generate_maze(pos, maze, visited= None):
 def create_maze(size_x,size_y,start = None,exit = None) -> list:
     # ao gerar labirintos, tente evitar tamanhos pares, por causa da logica que eu escolhi 
     # pra fazer o algoritimo ele gera um labirinto meio quebrado quando com numeros pares
+    # por enquanto a entrada é sempre no (1,0) por padrao, talvez adicionar aleatoriedade pra ela tbm
     maze = [[1]*size_x for _ in range(size_y)]
     for i in range(1,len(maze) -1,2):
         for j in range(1,len(maze[i]) -1,2):
             maze[i][j] = 0
 
+
     if start == None:        
-        pass # faltando completar essa parte
-    
-    if exit == None:        
-        pass # e essa
+        start = (1,0)
+      
+
+    if exit == None:   
+        quadrant = randint(0,4)
+        match quadrant:
+            case 0:
+                choice = randint(len(maze)//2,len(maze)-2)
+                exit = (choice,1)
+            case 1:
+                choice = randint(len(maze[0])//2,len(maze[0]) -4)
+                exit = (1,choice)
+            case 2:
+                choice = randint(2,len(maze)-2)
+                exit = (choice,-2)
+            case 3:
+                choice = randint(2,len(maze[0])-4)
+                exit = (-2,choice)
+            case 4:
+                choice_x = randint((len(maze)//2)-2, (len(maze)//2)+2)
+                choice_y = randint((len(maze[0])//2)-2, (len(maze[0])//2)+2)
+                exit = (choice_x,choice_y)
         
 
-    generate_maze(start,maze)
+    generate_maze((1,1),maze)
 
     maze[start[0]][start[1]] = 2
     maze[exit[0]][exit[1]] = 3
 
     return maze
 
+
+#testagem
 def print_maze(maze):
     for i in range(len(maze)):
         for j in range(len(maze[i])):
@@ -77,7 +100,7 @@ def print_maze(maze):
 
         print()
 
-maze = create_maze(41,41,(1,1),(7,7))
 
 
+maze = create_maze(41,41)
 print_maze(maze)

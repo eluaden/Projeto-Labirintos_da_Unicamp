@@ -37,7 +37,7 @@ class Bomb(Item):
 
     def special_action(self,player):
         if not self._on_inv:
-            raise Exception("bomba acionada sem estra no inventário de um jogador!!")
+            raise Exception("bomba acionada sem estar no inventário de um jogador!!")
 
         directions = [(0,1),(0,-1),(-1,0),(1,0)]
 
