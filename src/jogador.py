@@ -1,5 +1,7 @@
-class Jogador:
-    def _init_(self, nome: str, vidas: int, pontos_total: int, labirinto_atual: int, posicao_atual: list, tempo_restante:int) -> None:
+import pygame.sprite
+
+class Jogador(pygame.sprite.Sprite):
+    def __init__(self, nome: str, vidas: int, pontos_total: int, labirinto_atual, posicao_atual: list, tempo_restante:int):
         self._nome = nome
         self._vidas = vidas
         self._pontos_total = pontos_total
@@ -7,7 +9,38 @@ class Jogador:
         self._labirinto_atual = labirinto_atual
         self._posicao_atual = posicao_atual.copy()
         self._tempo_restante = tempo_restante
-    
+
+        # Carregue as imagens para a animação do jogador
+        self.imagens = [
+            pygame.image.load('animation-master/attack_1.png').convert_alpha(),
+            pygame.image.load('animation-master/attack_2.png').convert_alpha(),
+            pygame.image.load('animation-master/attack_3.png').convert_alpha(),
+            pygame.image.load('animation-master/attack_4.png').convert_alpha(),
+            pygame.image.load('animation-master/attack_5.png').convert_alpha(),
+            pygame.image.load('animation-master/attack_6.png').convert_alpha(),
+            pygame.image.load('animation-master/attack_7.png').convert_alpha(),
+            pygame.image.load('animation-master/attack_8.png').convert_alpha(),
+            pygame.image.load('animation-master/attack_9.png').convert_alpha(),
+            
+            # Adicione mais imagens conforme necessário para a animação
+        ]
+        
+        self.image_index = 0  # Índice atual da imagem de animação
+        self.image = self.imagens[self.image_index]  # Imagem atual do jogador
+        
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (posicao_atual[0]*20, posicao_atual[1]*20)
+        
+    def update(self):
+        # Atualize a imagem do jogador para a próxima na animação
+        self.image_index += 0.25
+        if self.image_index >= len(self.imagens):
+            self.image_index = 0
+        self.image = self.imagens[int(self.image_index)]
+        
+        # Atualize a posição do retângulo do jogador
+        self.rect.topleft = (self.posicao_atual[0]*40, self.posicao_atual[1]*40)  # Ajuste conforme necessário
+           
     @property
     def nome(self):
         return self._nome
@@ -58,25 +91,29 @@ class Jogador:
     
     @property
     def tempo_restante(self):
-        return self.tempo_restante
+        return self._tempo_restante
 
     @tempo_restante.setter
     def tempo_restante(self, value):
         self._tempo_restante = value    
         
         
-    def mover(self,direcao:str):
-        match direcao:
-            case 'direita':
-                self._posicao_atual[0] += 1
-            case 'esquerda':
-                self._posicao_atual[0] -= 1
-            case 'cima':
-                self._posicao_atual[1] += 1
-            case 'baixo':
-                self._posicao_atual[1] -= 1
-            case _:
-                print("Direção inválida")
+    def mover(self, direcao):
+        x, y = self.posicao_atual
+        nova_posicao = [x, y]
+
+        if direcao == 'esquerda':
+            nova_posicao = [x - 1, y]
+        elif direcao == 'direita':
+            nova_posicao = [x + 1, y]
+        elif direcao == 'cima':
+            nova_posicao = [x, y - 1]
+        elif direcao == 'baixo':
+            nova_posicao = [x, y + 1]
+
+        # Verificar se a nova posição é válida no labirinto
+        if self.labirinto_atual[nova_posicao[1]][nova_posicao[0]] == 0:
+            self.posicao_atual = nova_posicao
                 
                 
     def aumentar_vida(self):

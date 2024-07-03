@@ -1,45 +1,38 @@
 class Item:
-    def __init__(self,posicao,on_inv = False) -> None:
+    def __init__(self, posicao, on_inv=False) -> None:
         self._pos = posicao
-        self._on_inv = on_inv # verifica se esta no inventario do jogador
+        self._on_inv = on_inv  # verifica se está no inventário do jogador
     
     def special_action(self):
         pass
 
     @property
-    def position(self,pos):
+    def position(self):
+        return self._pos
+    
+    @position.setter
+    def position(self, pos):
         self._pos = pos
 
-    @position.setter
-    def position(self,pos):
-        self._pos = pos
 
 class Clock(Item):
     def __init__(self, posicao) -> None:
         super().__init__(posicao)
     
-    def special_action(self,player):
-        #adiciona 5 segundos no temporizador do jogador
+    def special_action(self, player):
+        # adiciona 5 segundos no temporizador do jogador
         player.tempo_restante += 5
-    
-    @property
-    def position(self,pos):
-        self._pos = pos
 
-    @position.setter
-    def position(self,pos):
-        self._pos = pos
-        
 
 class Bomb(Item):
     def __init__(self, posicao) -> None:
         super().__init__(posicao)
 
-    def special_action(self,player):
+    def special_action(self, player):
         if not self._on_inv:
-            raise Exception("bomba acionada sem estar no inventário de um jogador!!")
+            raise Exception("Bomba acionada sem estar no inventário de um jogador!!")
 
-        directions = [(0,1),(0,-1),(-1,0),(1,0)]
+        directions = [(0, 1), (0, -1), (-1, 0), (1, 0)]
 
         for direction in directions:
             new_x = player.posicao_atual[0] + direction[0]
@@ -49,6 +42,7 @@ class Bomb(Item):
                (new_y < len(player.labirinto_atual[0]) and new_y >= 0):
                 
                 player.labirinto_atual[new_x][new_y] = 0
+
     
 
 
