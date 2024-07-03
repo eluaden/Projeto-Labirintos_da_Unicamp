@@ -4,7 +4,6 @@ from jogador import Jogador
 from moderador import Moderador
 from Inimigos import Teacher, Statue
 from itens import Clock, Bomb
-from niveis import level_1
 
 # Configurações do Pygame
 pygame.init()
@@ -26,7 +25,19 @@ TAMANHO_CELULA = 40
 
 class Jogo:
     def __init__(self):
-        self.labirinto = level_1
+        self.labirinto =    [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1],
+    [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
+    [1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1],
+    [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1],
+    [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
         self.jogador = Jogador(nome="Player1", vidas=5, pontos_total=0, labirinto_atual=self.labirinto, posicao_atual=[1, 1], tempo_restante=100)
         self.professores = [Teacher(nome="Prof1", position=(2, 2))]
         self.estatuas = [Statue(nome="Statue1", position=(3, 3))]
