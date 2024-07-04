@@ -18,12 +18,13 @@ def save_level(level_name,maze,enemies,items,player):
 
 def read_level_base(level_name) -> dict:
     #le os arquivos base de niveis
-    file_path = os.path.join("level_base/",level_name + ".pkl")
+    file_path = os.path.join("database/level_base/",level_name + ".pkl")
     with open(file_path,"rb") as level:
+        print(type(level))
         return pickle.load(level)
     
 def read_level_progress(level_name) -> dict:
     #le os arquivos de progresso de niveis
-    file_path = os.path.join("level_progress/",level_name + ".pkl")
+    file_path = os.path.join("database/level_progress/",level_name + ".pkl")
     with open(file_path,"rb") as level:
         return pickle.load(level)
