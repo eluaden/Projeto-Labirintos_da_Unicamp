@@ -59,11 +59,18 @@ posicao_opcao_carregar_jogo = ((LARGURA_JANELA - largura_opcoes) // 2, ALTURA_JA
 posicao_opcao_informacoes = ((LARGURA_JANELA - largura_opcoes) // 2, ALTURA_JANELA * 3 // 4 + 100 - altura_opcoes // 2)
 
 # Função para abrir um novo jogo
-def abrir_novo_jogo():
-    subprocess.Popen(['python', 'src/novo_jogo.py'])
+if os.name == 'nt':
+    def abrir_novo_jogo():
+        subprocess.Popen(['python', 'src/novo_jogo.py'])
 
-def carregar_jogo():
-    subprocess.Popen(['python', 'src/carregar_jogo.py'])
+    def carregar_jogo():
+        subprocess.Popen(['python', 'src/carregar_jogo.py'])
+else:
+    def abrir_novo_jogo():
+        subprocess.Popen(['python3', 'src/novo_jogo.py'])
+
+    def carregar_jogo():
+        subprocess.Popen(['python3', 'src/carregar_jogo.py'])
 
 # Loop principal
 rodando = True
