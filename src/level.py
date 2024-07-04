@@ -2,7 +2,9 @@ import pygame
 import random
 from jogador import Jogador
 from moderador import Moderador
-from inimigos import Teacher, Statue
+from Inimigos import Teacher, Statue
+from itens import Clock, Bomb
+from Inimigos import Teacher, Statue
 from itens import Clock, Bomb, Book
 from save import *
 # Configurações do Pygame
