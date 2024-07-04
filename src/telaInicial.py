@@ -38,6 +38,9 @@ posicao_opcao_informacoes = ((LARGURA_JANELA - largura_opcoes) // 2, ALTURA_JANE
 def abrir_novo_jogo():
     subprocess.Popen(['python', 'src/main.py'])
 
+def carregar_jogo():
+    subprocess.Popen(['python', 'src/carregar_jogo.py'])
+
 # Loop principal
 rodando = True
 ultimo_frame = None  # Para armazenar o último frame do vídeo
@@ -83,6 +86,9 @@ while rodando:
     if posicao_opcao_carregar_jogo[0] <= mouse_x <= posicao_opcao_carregar_jogo[0] + largura_opcoes and \
        posicao_opcao_carregar_jogo[1] <= mouse_y <= posicao_opcao_carregar_jogo[1] + altura_opcoes:
         opcao_carregar_jogo = fonte_opcoes.render('Carregar Jogo', True, cor_texto_hover)
+        if pygame.mouse.get_pressed()[0]:  # Verifica se clicou com o botão esquerdo do mouse
+            carregar_jogo()
+            rodando = False  # Fecha o menu principal ao abrir o novo jogo
     else:
         opcao_carregar_jogo = fonte_opcoes.render('Carregar Jogo', True, cor_texto_normal)
     
