@@ -29,10 +29,3 @@ def save_level_progress(level_name,maze,enemies,items,posicoes_ocupadas,player=N
         }
 
         pickle.dump(level,save)
-
-
-def verify_save(name):
-    file_path = os.path.join("database/level_progress/",name + ".pkl")
-
-    if os.path.exists(file_path):
-        return True
