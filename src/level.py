@@ -1,13 +1,12 @@
 import pygame
 import random
 from jogador import Jogador
-from inimigos import Teacher, Statue
-from itens import Clock, Bomb
+from inimigos import Teacher
 from itens import Clock, Bomb, Book
-from save import *
+
 # Configurações do Pygame
 pygame.init()
-LARGURA_JANELA, ALTURA_JANELA = 1200, 800
+LARGURA_JANELA, ALTURA_JANELA = 1200, 800  # Ajustado para as novas dimensões da tela
 TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA))
 pygame.display.set_caption('Os Labirintos da Unicamp')
 FPS = 30
@@ -23,35 +22,37 @@ ROXO = (128, 0, 128)
 LARANJA = (255, 165, 0)
 
 # Dimensões do labirinto
-TAMANHO_CELULA = 40
+TAMANHO_CELULA = 70
 
 class Level:
-    def __init__(self,nome,labirinto,itens,inimigos,tempo,media,estatua = None):
+    def __init__(self, nome, labirinto, itens, inimigos, tempo, media, estatua=None):
         self.nome = nome
         self.labirinto = labirinto
-        self.posicoes_ocupadas = [] # posicoes do jogo que ja estao ocupadas, seja por item, seja por inimigo, seja por jogador
+        self.posicoes_ocupadas = []
         self.professores = self.gerar_inimigos(inimigos["teachers"])
-        self.itens = self.gerar_itens_aleatorios(itens["bombs"],itens["clocks"],itens["books"])
+        self.itens = self.gerar_itens_aleatorios(itens["bombs"], itens["clocks"], itens["books"])
         self.clock = pygame.time.Clock()
-        self.ultimo_tempo = pygame.time.get_ticks()  # Para rastrear o tempo
+        self.ultimo_tempo = pygame.time.get_ticks()
         self.media = media
         self.estatua = estatua
-        self.saida = next(((y,x) for x in range(len(self.labirinto)) for y in range(len(self.labirinto[0])) if self.labirinto[x][y] == 3), None)
-        self.jogador = Jogador(nome="Player1",nota = 0, pontos_total=0, labirinto_atual=self.labirinto, posicao_atual=[1, 1], tempo_restante= tempo)
-         
+        self.saida = next(((y, x) for x in range(len(self.labirinto)) for y in range(len(self.labirinto[0])) if self.labirinto[x][y] == 3), None)
+        self.jogador = Jogador(nome="Player1", nota=0, pontos_total=0, labirinto_atual=self.labirinto, posicao_atual=[1, 1], tempo_restante=tempo)
 
-    def gerar_itens_aleatorios(self,n_bomb,n_rel,n_liv):
-        
+        # Dimensões do labirinto em pixels
+        self.largura_labirinto = len(self.labirinto[0]) * TAMANHO_CELULA
+        self.altura_labirinto = len(self.labirinto) * TAMANHO_CELULA
+
+        # Ajuste para a câmera
+        self.camera_x = 0
+        self.camera_y = 0
+
+    def gerar_itens_aleatorios(self, n_bomb, n_rel, n_liv):
         itens = {"relogios": [], "bombas": [], "livros": []}
-        for _ in range(n_rel):  # Número de cada item a ser gerado
+        for _ in range(n_rel):
             posicao_relogio = self.posicao_aleatoria()
-
-            # Criando instâncias de itens específicos
             relogio = Clock(posicao_relogio)
-
-            # Adicionando as instâncias à lista de itens
             itens["relogios"].append(relogio)
-        for _ in range(n_bomb):  
+        for _ in range(n_bomb):
             posicao_bomba = self.posicao_aleatoria()
             bomba = Bomb(posicao_bomba)
             itens["bombas"].append(bomba)
@@ -59,20 +60,16 @@ class Level:
             posicao_livro = self.posicao_aleatoria()
             livro = Book(posicao_livro)
             itens["livros"].append(livro)
-
-            
-        print(f"Esses são os itens:  {itens}")
         return itens
-    
-    def gerar_inimigos(self,n_prof):
+
+    def gerar_inimigos(self, n_prof):
         professores = []
         for _ in range(n_prof):
             posicao_prof = self.posicao_aleatoria()
-            professor = Teacher("prof",posicao_prof)
+            professor = Teacher("prof", posicao_prof)
             professores.append(professor)
         return professores
-        
-    
+
     def posicao_aleatoria(self):
         while True:
             x = random.randint(1, len(self.labirinto[0]) - 2)
@@ -85,77 +82,76 @@ class Level:
         for y, linha in enumerate(self.labirinto):
             for x, celula in enumerate(linha):
                 cor = BRANCO if celula == 0 else LARANJA if celula == 2 else ROXO if celula == 3 else PRETO
-
-                pygame.draw.rect(TELA, cor, (x * TAMANHO_CELULA, y * TAMANHO_CELULA, TAMANHO_CELULA, TAMANHO_CELULA))
+                pygame.draw.rect(TELA, cor, ((x * TAMANHO_CELULA) - self.camera_x, (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
 
     def desenhar_jogador(self):
         x, y = self.jogador.posicao_atual
-        pygame.draw.rect(TELA, AZUL, (x * TAMANHO_CELULA, y * TAMANHO_CELULA, TAMANHO_CELULA, TAMANHO_CELULA))
+        pygame.draw.rect(TELA, AZUL, ((x * TAMANHO_CELULA) - self.camera_x, (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
 
-    def desenhar_inimigos(self,estatua = None):
+    def desenhar_inimigos(self):
         for professor in self.professores:
             x, y = professor.position
-            pygame.draw.rect(TELA, VERMELHO, (x * TAMANHO_CELULA, y * TAMANHO_CELULA, TAMANHO_CELULA, TAMANHO_CELULA))
-        if estatua:
-            x, y = estatua.position
-            pygame.draw.rect(TELA, VERMELHO, (x * TAMANHO_CELULA, y * TAMANHO_CELULA, TAMANHO_CELULA, TAMANHO_CELULA))    
+            pygame.draw.rect(TELA, VERMELHO, ((x * TAMANHO_CELULA) - self.camera_x, (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+        if self.estatua:
+            x, y = self.estatua.position
+            pygame.draw.rect(TELA, VERMELHO, ((x * TAMANHO_CELULA) - self.camera_x, (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
 
     def desenhar_itens(self):
         for tipo_item, itens in self.itens.items():
             cor = AMARELO if tipo_item == 'livros' else VERDE if tipo_item == 'relogios' else VERMELHO
-            if tipo_item in ['relogios', 'bombas','livros']:
-                for item in itens:
-                    x, y = item.position  # Acessa a posição do item
-                    pygame.draw.rect(TELA, cor, (x * TAMANHO_CELULA, y * TAMANHO_CELULA, TAMANHO_CELULA, TAMANHO_CELULA))
-            
-    
+            for item in itens:
+                x, y = item.position
+                pygame.draw.rect(TELA, cor, ((x * TAMANHO_CELULA) - self.camera_x, (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+
     def desenhar_informacoes(self):
         fonte = pygame.font.SysFont(None, 36)
-        texto_nota = fonte.render(f'nota: {self.jogador.nota}', True, BRANCO)
+        texto_nota = fonte.render(f'Nota: {self.jogador.nota}', True, BRANCO)
         texto_tempo = fonte.render(f'Tempo: {self.jogador.tempo_restante}', True, BRANCO)
         texto_bombas = fonte.render(f'Bombas: {len(self.jogador.inventario["bombas"])}', True, BRANCO)
-        
         TELA.blit(texto_nota, (700, 40))
         TELA.blit(texto_tempo, (700, 60))
         TELA.blit(texto_bombas, (700, 80))
-        
-    def atualizacao_por_segundo(self): #coisas que ocorrem na tela a cada segundo
+
+    def atualizar_camera(self):
+        jogador_x, jogador_y = self.jogador.posicao_atual
+        self.camera_x = jogador_x * TAMANHO_CELULA - LARGURA_JANELA // 2
+        self.camera_y = jogador_y * TAMANHO_CELULA - ALTURA_JANELA // 2
+
+        # Limita o deslocamento da câmera para que não mostre áreas fora do labirinto
+        self.camera_x = max(0, min(self.camera_x, self.largura_labirinto - LARGURA_JANELA))
+        self.camera_y = max(0, min(self.camera_y, self.altura_labirinto - ALTURA_JANELA))
+
+    def atualizacao_por_segundo(self):
         agora = pygame.time.get_ticks()
-        if agora - self.ultimo_tempo >= 1000:  # 1000 milissegundos = 1 segundo
+        if agora - self.ultimo_tempo >= 1000:
             self.jogador.tempo_restante -= 1
             self.ultimo_tempo = agora
-            print(f"nota:{self.jogador.nota}, tempo:{self.jogador.tempo_restante}")
-            print(f"Inventario: {self.jogador.inventario}")
+            print(f"Nota: {self.jogador.nota}, Tempo: {self.jogador.tempo_restante}")
 
-            for professor in self.professores: # atualiza posição dos professores
+            for professor in self.professores:
                 professor.wander(self.labirinto)
 
             if self.jogador.tempo_restante <= 0:
                 print("Seu tempo acabou!")
-                self.moderador.perdeu()
                 pygame.quit()
                 quit()
 
     def verificar_colisoes(self):
-        # Verifique colisão com bombas
-        #print(f"Esses são os itens:  {self.itens}")
         for bomba in self.itens["bombas"]:
-            #print(bomba.position)
-            if tuple(self.jogador.posicao_atual) == bomba.position and not bomba._on_inv:
+            if tuple(self.jogador.posicao_atual) == bomba.position and not bomba.on_inv:
                 self.jogador.inventario["bombas"].append(bomba)
-                bomba.on_inv = True  # Adiciona a bomba ao inventário do jogador
-                self.itens["bombas"].remove(bomba)  # Remove a bomba da lista de itens
-        
+                bomba.on_inv = True
+                self.itens["bombas"].remove(bomba)
+
         for relogio in self.itens["relogios"]:
-            
             if tuple(self.jogador.posicao_atual) == relogio.position:
-                relogio.special_action(self.jogador)  
-                self.itens["relogios"].remove(relogio)  
-        
+                relogio.special_action(self.jogador)
+                self.itens["relogios"].remove(relogio)
+
         for livro in self.itens["livros"]:
             if tuple(self.jogador.posicao_atual) == livro.position:
-                livro.special_action(self.jogador) # Adiciona a bomba ao inventário do jogador
-                self.itens["livros"].remove(livro)  # Remove a bomba da lista de itens
+                livro.special_action(self.jogador)
+                self.itens["livros"].remove(livro)
 
         if tuple(self.jogador.posicao_atual) == self.saida:
             if self.jogador.nota >= self.media:
@@ -183,24 +179,17 @@ class Level:
                     elif evento.key == pygame.K_SPACE and len(self.jogador.inventario["bombas"]) > 0:
                         bomba = self.jogador.inventario["bombas"].pop()
                         bomba.special_action(self.jogador)
-                        
-                        
 
             self.atualizacao_por_segundo()
             self.verificar_colisoes()
-
-            # Atualize o jogador (incluindo a animação)
-            self.jogador.update()
+            self.atualizar_camera()
 
             TELA.fill(PRETO)
             self.desenhar_labirinto()
             self.desenhar_inimigos()
             self.desenhar_itens()
-            
-            # Desenhe informações na tela
             self.desenhar_informacoes()
-            # Desenhe o jogador na sua posição atual
-            TELA.blit(self.jogador.image, self.jogador.rect)
+            self.desenhar_jogador()
 
             pygame.display.flip()
             self.clock.tick(FPS)
