@@ -49,8 +49,8 @@ class Bomb(Item):
         print(f"Explodindo bomba na posição {player.posicao_atual}")
 
         for direction in directions:
-            new_x = player.posicao_atual[1] + direction[0]
-            new_y = player.posicao_atual[0] + direction[1]
+            new_x = player.posicao_atual[0] + direction[0]
+            new_y = player.posicao_atual[1] + direction[1]
 
             if (new_x < len(player.labirinto_atual)-1 and new_x > 0) and \
                (new_y < len(player.labirinto_atual[0])-1 and new_y > 0):

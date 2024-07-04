@@ -10,7 +10,7 @@ class Moderador:
             self.verificar_fim_de_jogo(jogador)
 
     def verificar_fim_de_jogo(self, jogador:Jogador):
-        if jogador.vidas <= 0 or jogador.tempo_restante <= 0:
+        if jogador.tempo_restante <= 0:
             # Aqui haverá algum tipo de interrupção no loop principal do jogo
             print(f"vidas:{jogador.vidas}, tempo:{jogador.tempo_restante}")
             print("Fim de jogo!")

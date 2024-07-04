@@ -117,7 +117,7 @@ class Level:
         TELA.blit(texto_tempo, (700, 60))
         TELA.blit(texto_bombas, (700, 80))
         
-    def atualizacao_lenta(self):
+    def atualizacao_por_segundo(self): #coisas que ocorrem na tela a cada segundo
         agora = pygame.time.get_ticks()
         if agora - self.ultimo_tempo >= 1000:  # 1000 milissegundos = 1 segundo
             self.jogador.tempo_restante -= 1
@@ -177,7 +177,7 @@ class Level:
                         
                         
 
-            self.atualizacao_lenta()
+            self.atualizacao_por_segundo()
             self.atualizar_jogo()
 
             # Atualize o jogador (incluindo a animação)
