@@ -4,8 +4,9 @@ from jogador import Jogador
 from moderador import Moderador
 from Inimigos import Teacher, Statue
 from itens import Clock, Bomb
+from Inimigos import Teacher, Statue
+from itens import Clock, Bomb, Book
 from save import *
-
 # Configurações do Pygame
 pygame.init()
 LARGURA_JANELA, ALTURA_JANELA = 1000, 800
@@ -29,7 +30,7 @@ TAMANHO_CELULA = 40
 class Level:
     def __init__(self,labirinto,itens,estruturas,tempo,estatuas = None):
         self.labirinto = labirinto
-        self.jogador = Jogador(nome="Player1", vidas=5, pontos_total=0, labirinto_atual=self.labirinto, posicao_atual=[1, 1], tempo_restante= tempo)
+        self.jogador = Jogador(nome="Player1",nota = 0, pontos_total=0, labirinto_atual=self.labirinto, posicao_atual=[1, 1], tempo_restante= tempo)
         self.posicoes_ocupadas = [] # posicoes do jogo que ja estao ocupadas, seja por item, seja por inimigo, seja por jogador
         self.professores = self.gerar_inimigos_aleatorios(estruturas["teachers"])
         self.estatuas = [Statue(nome="Statue1", position=(3, 3))]
@@ -40,28 +41,25 @@ class Level:
         
         
 
-    def gerar_itens_aleatorios(self,n_rel,n_bomb,n_liv):
+    def gerar_itens_aleatorios(self,n_bomb,n_rel,n_liv):
         
-        itens = {"relogio": [], "bombas": [], "pontos": []}
+        itens = {"relogios": [], "bombas": [], "livros": []}
         for _ in range(n_rel):  # Número de cada item a ser gerado
             posicao_relogio = self.posicao_aleatoria()
-            self.posicoes_ocupadas.append(posicao_relogio)
 
             # Criando instâncias de itens específicos
             relogio = Clock(posicao_relogio)
 
             # Adicionando as instâncias à lista de itens
-            itens["relogio"].append(relogio)
+            itens["relogios"].append(relogio)
         for _ in range(n_bomb):  
             posicao_bomba = self.posicao_aleatoria()
-            self.posicoes_ocupadas.append(posicao_bomba)
-            bomba = Clock(posicao_bomba)
-            itens["relogio"].append(bomba)
+            bomba = Bomb(posicao_bomba)
+            itens["bombas"].append(bomba)
         for _ in range(n_liv):
             posicao_livro = self.posicao_aleatoria()
-            self.posicoes_ocupadas.append(posicao_livro)
-            livro = Clock(posicao_livro)
-            itens["relogio"].append(livro)
+            livro = Book(posicao_livro)
+            itens["livros"].append(livro)
 
             
         print(f"Esses são os itens:  {itens}")
@@ -71,16 +69,16 @@ class Level:
         professores = []
         for _ in range(n_prof):
             posicao_prof = self.posicao_aleatoria()
-            self.posicoes_ocupadas.append(posicao_prof)
             professor = Teacher("prof",posicao_prof)
             professores.append(professor)
         return professores
     
     def posicao_aleatoria(self):
         while True:
-            x = random.randint(1, len(self.labirinto[0]) - 2)
-            y = random.randint(1, len(self.labirinto) - 2)
+            x = random.randint(1, len(self.labirinto) - 2)
+            y = random.randint(1, len(self.labirinto[0]) - 2)
             if self.labirinto[y][x] == 0 and (x, y) not in self.posicoes_ocupadas:
+                self.posicoes_ocupadas.append((x, y))
                 return (x, y)
 
     def desenhar_labirinto(self):
@@ -97,39 +95,36 @@ class Level:
     def desenhar_inimigos(self,estatua = None):
         for professor in self.professores:
             x, y = professor.position
-            pygame.draw.rect(TELA, VERMELHO, (y * TAMANHO_CELULA, x * TAMANHO_CELULA, TAMANHO_CELULA, TAMANHO_CELULA))
+            pygame.draw.rect(TELA, VERMELHO, (x * TAMANHO_CELULA, y * TAMANHO_CELULA, TAMANHO_CELULA, TAMANHO_CELULA))
         if estatua != None:
             x, y = estatua.position
             pygame.draw.rect(TELA, VERMELHO, (x * TAMANHO_CELULA, y * TAMANHO_CELULA, TAMANHO_CELULA, TAMANHO_CELULA))    
 
     def desenhar_itens(self):
         for tipo_item, itens in self.itens.items():
-            cor = AMARELO if tipo_item == 'pontos' else VERDE if tipo_item == 'relogio' else VERMELHO
-            if tipo_item in ['relogio', 'bombas']:
+            cor = AMARELO if tipo_item == 'livros' else VERDE if tipo_item == 'relogios' else VERMELHO
+            if tipo_item in ['relogios', 'bombas','livros']:
                 for item in itens:
                     x, y = item.position  # Acessa a posição do item
                     pygame.draw.rect(TELA, cor, (x * TAMANHO_CELULA, y * TAMANHO_CELULA, TAMANHO_CELULA, TAMANHO_CELULA))
-            else:
-                for posicao in itens:
-                    x, y = posicao
-                    pygame.draw.rect(TELA, cor, (x * TAMANHO_CELULA, y * TAMANHO_CELULA, TAMANHO_CELULA, TAMANHO_CELULA))
+            
     
     def desenhar_informacoes(self):
         fonte = pygame.font.SysFont(None, 36)
-        texto_vidas = fonte.render(f'Vidas: {self.jogador.vidas}', True, BRANCO)
+        texto_nota = fonte.render(f'nota: {self.jogador.nota}', True, BRANCO)
         texto_tempo = fonte.render(f'Tempo: {self.jogador.tempo_restante}', True, BRANCO)
-        texto_bombas = fonte.render(f'Bombas: {self.jogador.inventario["bombas"]}', True, BRANCO)
+        texto_bombas = fonte.render(f'Bombas: {len(self.jogador.inventario["bombas"])}', True, BRANCO)
         
-        TELA.blit(texto_vidas, (700, 40))
+        TELA.blit(texto_nota, (700, 40))
         TELA.blit(texto_tempo, (700, 60))
         TELA.blit(texto_bombas, (700, 80))
         
-    def atualizacao_(self):
+    def atualizacao_por_segundo(self): #coisas que ocorrem na tela a cada segundo
         agora = pygame.time.get_ticks()
         if agora - self.ultimo_tempo >= 1000:  # 1000 milissegundos = 1 segundo
             self.jogador.tempo_restante -= 1
             self.ultimo_tempo = agora
-            print(f"vidas:{self.jogador.vidas}, tempo:{self.jogador.tempo_restante}")
+            print(f"nota:{self.jogador.nota}, tempo:{self.jogador.tempo_restante}")
             print(f"Inventario: {self.jogador.inventario}")
 
             for professor in self.professores: # atualiza posição dos professores
@@ -148,14 +143,20 @@ class Level:
         for bomba in self.itens["bombas"]:
             #print(bomba.position)
             if tuple(self.jogador.posicao_atual) == bomba.position and not bomba._on_inv:
-                self.jogador.inventario["bombas"] += 1  # Adiciona a bomba ao inventário do jogador
+                self.jogador.inventario["bombas"].append(bomba)
+                bomba.on_inv = True  # Adiciona a bomba ao inventário do jogador
                 self.itens["bombas"].remove(bomba)  # Remove a bomba da lista de itens
         
-        for relogio in self.itens["relogio"]:
-            #print(bomba.position)
+        for relogio in self.itens["relogios"]:
+            
             if tuple(self.jogador.posicao_atual) == relogio.position:
-                relogio.special_action(self.jogador)  # Adiciona a bomba ao inventário do jogador
-                self.itens["relogio"].remove(relogio)  # Remove a bomba da lista de itens
+                relogio.special_action(self.jogador)  
+                self.itens["relogios"].remove(relogio)  
+        
+        for livro in self.itens["livros"]:
+            if tuple(self.jogador.posicao_atual) == livro.position:
+                livro.special_action(self.jogador) # Adiciona a bomba ao inventário do jogador
+                self.itens["livros"].remove(livro)  # Remove a bomba da lista de itens
 
     def jogar(self):
         rodando = True
@@ -172,8 +173,13 @@ class Level:
                         self.jogador.mover('cima')
                     elif evento.key == pygame.K_DOWN:
                         self.jogador.mover('baixo')
+                    elif evento.key == pygame.K_SPACE and len(self.jogador.inventario["bombas"]) > 0:
+                        bomba = self.jogador.inventario["bombas"].pop()
+                        bomba.special_action(self.jogador)
+                        
+                        
 
-            self.atualizacao_()
+            self.atualizacao_por_segundo()
             self.atualizar_jogo()
 
             # Atualize o jogador (incluindo a animação)

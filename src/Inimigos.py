@@ -13,22 +13,6 @@ class Enemy: # classe base para Enemys,trata apenas da movimentação dele
     def nome(self):
         return self._nome
     
-    def wander(self,maze):
-
-        moves = [(0,1),(0,-1),(1,0),(-1,0)]
-        pss_moves = []
-        for move in moves:
-            new_x = move[0] + self._pos[0]
-            new_y = move[1] + self._pos[1]
-
-            if new_x < len(maze) and new_x >= 0 and new_y < len(maze[0]) and new_y >= 0:
-                if maze[new_x][new_y] == 0:
-                    pss_moves.append(move)   
-        if pss_moves:                                
-            move = pss_moves[randint(0,len(pss_moves)-1)]
-        else: move = (0,0)
-        self._pos = (self._pos[0] + move[0], self._pos[1] + move[1])
-    
     def die(self,enemies):
         if self in enemies:
             enemies.remove(self)
@@ -46,8 +30,21 @@ class Teacher(Enemy):
     def nome(self):
         return self._nome
     
-    def wander(self, maze):
-        return super().wander(maze)
+    def wander(self,maze):
+
+        moves = [(0,1),(0,-1),(1,0),(-1,0)]
+        pss_moves = []
+        for move in moves:
+            new_x = move[0] + self._pos[0]
+            new_y = move[1] + self._pos[1]
+
+            if new_x < len(maze) and new_x >= 0 and new_y < len(maze[0]) and new_y >= 0:
+                if maze[new_y][new_x] == 0:
+                    pss_moves.append(move)   
+        if pss_moves:                                
+            move = pss_moves[randint(0,len(pss_moves)-1)]
+        else: move = (0,0)
+        self._pos = (self._pos[0] + move[0], self._pos[1] + move[1])
     
     def ask(self):
         pass
