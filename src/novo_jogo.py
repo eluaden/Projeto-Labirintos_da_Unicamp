@@ -1,23 +1,18 @@
 import pygame
 import pygame.freetype
 import os
-import ctypes
 from save import *
 from level import Level
 
 # Inicialize o Pygame
 pygame.init()
 
-# Defina as dimensões da janela
-LARGURA_JANELA, ALTURA_JANELA = 1200, 700
-
-# Dimensões da tela
-TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA))
-pygame.display.set_caption('Novo Jogo')
-
 # Obtenha as dimensões da tela do sistema
 screen_info = pygame.display.Info()
 screen_width, screen_height = screen_info.current_w, screen_info.current_h
+
+# Defina as dimensões da janela
+LARGURA_JANELA, ALTURA_JANELA = 1200, 700
 
 # Calcule a posição para centralizar a janela
 pos_x = (screen_width - LARGURA_JANELA) // 2
@@ -26,6 +21,10 @@ pos_y = (screen_height - ALTURA_JANELA) // 2
 # Defina a posição da janela
 os.environ['SDL_VIDEO_WINDOW_POS'] = f"{pos_x},{pos_y}"
 print(f"SDL_VIDEO_WINDOW_POS = {os.environ['SDL_VIDEO_WINDOW_POS']}")
+
+# Dimensões da tela
+TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA))
+pygame.display.set_caption('Novo Jogo')
 
 # Inicialize o mixer
 pygame.mixer.init()
@@ -96,7 +95,7 @@ input_box = InputBox(475, 280, 250, 30)
 button_rect = pygame.Rect(550, 350, 100, 40)
 button_color = GRAY
 
-def main():
+def novo_jogo():
     clock = pygame.time.Clock()
     running = True
 
