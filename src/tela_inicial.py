@@ -1,23 +1,40 @@
 import pygame
 import cv2
 import subprocess
+import ctypes
+# Inicialize o Pygame
+pygame.init()
 
-# Carregando a música
+# Defina as dimensões da janela
+LARGURA_JANELA, ALTURA_JANELA = 1200, 700
 
+# Dimensões da tela
+TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA))
+pygame.display.set_caption('Novo Jogo')
+
+# Obtenha a resolução da tela
+user32 = ctypes.windll.user32
+screen_width = user32.GetSystemMetrics(0)
+screen_height = user32.GetSystemMetrics(1)
+
+print(screen_width)
+print(screen_height)
+
+# Calcule a posição para centralizar a janela
+pos_x = (screen_width - LARGURA_JANELA) // 2
+pos_y = (screen_height - ALTURA_JANELA) // 2
+
+# Use ctypes para mover a janela para a posição desejada
+window = pygame.display.get_wm_info()['window']
+ctypes.windll.user32.SetWindowPos(window, 0, pos_x, pos_y, 0, 0, 0x0001)
+
+# Inicialize o mixer
 pygame.mixer.init()
 
+# Carregue e toque a música de fundo
 pygame.mixer.music.load('assets/musica_inicial.mp3')
-
 pygame.mixer.music.play(loops=-1)
-
 pygame.mixer.music.set_volume(0.3)
-
-
-# Configurações do Pygame
-pygame.init()
-LARGURA_JANELA, ALTURA_JANELA = 1000, 700
-TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA))
-pygame.display.set_caption('Tela Inicial')
 
 # Carregar o vídeo com OpenCV
 video = cv2.VideoCapture('assets/video_labirinto6.mp4')
@@ -47,7 +64,7 @@ posicao_opcao_informacoes = ((LARGURA_JANELA - largura_opcoes) // 2, ALTURA_JANE
 
 # Função para abrir um novo jogo
 def abrir_novo_jogo():
-    subprocess.Popen(['python', 'src/main.py'])
+    subprocess.Popen(['python', 'src/novo_jogo.py'])
 
 def carregar_jogo():
     subprocess.Popen(['python', 'src/carregar_jogo.py'])
