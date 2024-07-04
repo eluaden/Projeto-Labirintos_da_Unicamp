@@ -7,25 +7,39 @@ def read_level_base(level_name) -> dict:
     with open(file_path,"rb") as level:
         print(type(level))
         return pickle.load(level)
-    
-def read_level_progress(level_name) -> dict:
-    #le os arquivos de progresso de niveis
-    file_path = os.path.join("database/level_progress/",level_name + ".pkl")
-    with open(file_path,"rb") as level:
-        return pickle.load(level)
-    
-def save_level_progress(level_name,maze,enemies,items,posicoes_ocupadas,player=None):
-    #salva progresso de niveis, tanto quando o jogador morre quanto quando ele vence
-    file_path = os.path.join("database/level_progress/",level_name + ".pkl")
-    os.makedirs("database/level_progress/", exist_ok=True) # cria o diretorio caso nao exista
 
-    with open(file_path,"wb") as save:
-        level = {
-        "maze": maze,
-        "enemies": enemies,
-        "items": items,
-        "player": player,
-        "posicoes_ocupadas": posicoes_ocupadas
-        }
+def save_user(usuario,nivel_1,nivel_2,nivel_3,nivel_4,nivel_5,nivel_6,nivel_7,nivel_8,nivel_9,nivel_10,ultimo_nivel,pontuacao) -> None:
+    #salva o progresso do usuario
+    file_path = os.path.join("database/users/",usuario + ".pkl")
+    os.makedirs("database/users/", exist_ok=True) # cria o diretorio caso nao exista
+    user = {
+        "nome": usuario,
+        "nivel_1": nivel_1,
+        "nivel_2": nivel_2, 
+        "nivel_3": nivel_3,
+        "nivel_4": nivel_4,
+        "nivel_5": nivel_5,
+        "nivel_6": nivel_6,
+        "nivel_7": nivel_7,
+        "nivel_8": nivel_8,
+        "nivel_9": nivel_9,
+        "nivel_10": nivel_10,
+        "ultimo_nivel": ultimo_nivel,
+        "pontuacao": pontuacao
+    }
 
-        pickle.dump(level,save)
+    with open(file_path,"wb") as user_file:
+        pickle.dump(user,user_file)
+
+
+def read_user(usuario):
+    file_path = os.path.join("database/users/",usuario + ".pkl")
+    if os.path.exists(file_path):
+        with open(file_path,"rb") as user_file:
+            return pickle.load(user_file)
+    else:
+        return False
+
+
+
+    

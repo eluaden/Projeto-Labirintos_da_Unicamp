@@ -27,16 +27,17 @@ LARANJA = (255, 165, 0)
 TAMANHO_CELULA = 40
 
 class Level:
-    def __init__(self,nome,labirinto,itens,inimigos,tempo,media):
+    def __init__(self,nome,labirinto,itens,inimigos,tempo,media,estatua = None):
         self.nome = nome
         self.labirinto = labirinto
         self.posicoes_ocupadas = [] # posicoes do jogo que ja estao ocupadas, seja por item, seja por inimigo, seja por jogador
-        self.professores = self.gerar_inimigos_aleatorios(inimigos["teachers"])
+        self.professores = self.gerar_inimigos(inimigos["teachers"])
         self.itens = self.gerar_itens_aleatorios(itens["bombs"],itens["clocks"],itens["books"])
         self.moderador = Moderador(self)
         self.clock = pygame.time.Clock()
         self.ultimo_tempo = pygame.time.get_ticks()  # Para rastrear o tempo
         self.media = media
+        self.estatua = estatua
         self.saida = next(((y,x) for x in range(len(self.labirinto)) for y in range(len(self.labirinto[0])) if self.labirinto[x][y] == 3), None)
         self.jogador = Jogador(nome="Player1",nota = 0, pontos_total=0, labirinto_atual=self.labirinto, posicao_atual=[1, 1], tempo_restante= tempo)
          
@@ -65,13 +66,14 @@ class Level:
         print(f"Esses são os itens:  {itens}")
         return itens
     
-    def gerar_inimigos_aleatorios(self,n_prof):
+    def gerar_inimigos(self,n_prof):
         professores = []
         for _ in range(n_prof):
             posicao_prof = self.posicao_aleatoria()
             professor = Teacher("prof",posicao_prof)
             professores.append(professor)
         return professores
+        
     
     def posicao_aleatoria(self):
         while True:
