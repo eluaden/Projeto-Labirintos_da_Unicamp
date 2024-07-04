@@ -26,19 +26,24 @@ LARANJA = (255, 165, 0)
 TAMANHO_CELULA = 40
 
 class Level:
-    def __init__(self,nome,labirinto,itens,inimigos,tempo,media,player = None,estatua = None):
+    def __init__(self,nome,labirinto,itens,inimigos,tempo,media):
         self.nome = nome
         self.labirinto = labirinto
 
-        if player != None:
-            self.jogador = player
-        else:
-            self.jogador = Jogador(nome="Player1",nota = 0, pontos_total=0, labirinto_atual=self.labirinto, posicao_atual=[1, 1], tempo_restante= tempo)
-    
+        if verify_save(self.nome):
+            level = read_level_progress(self.nome)
+            self.labirinto = level["maze"]
+            self.professores = level["enemies"]["teachers"]
+            self.itens = level["items"]
+            self.posicoes_ocupadas = level["posicoes_ocupadas"]
+
+            if level["player"]:
+                self.jogador = level["player"]
+            else:
+                self.jogador = Jogador(nome="Player1",nota = 0, pontos_total=0, labirinto_atual=self.labirinto, posicao_atual=[1, 1], tempo_restante= tempo)
+        
         self.posicoes_ocupadas = [] # posicoes do jogo que ja estao ocupadas, seja por item, seja por inimigo, seja por jogador
         self.professores = self.gerar_inimigos_aleatorios(inimigos["teachers"])
-        if estatua:
-            self.estatuas = estatua
         self.itens = self.gerar_itens_aleatorios(itens["bombs"],itens["clocks"],itens["books"])
         self.moderador = Moderador(self)
         self.clock = pygame.time.Clock()
@@ -46,7 +51,12 @@ class Level:
         self.media = media
         self.saida = next(((y,x) for x in range(len(self.labirinto)) for y in range(len(self.labirinto[0])) if self.labirinto[x][y] == 3), None)
         print(f"Essa é a saída: {self.saida}")
+
         
+            
+
+
+
         
 
     def gerar_itens_aleatorios(self,n_bomb,n_rel,n_liv):

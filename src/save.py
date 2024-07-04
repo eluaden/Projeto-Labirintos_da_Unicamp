@@ -14,8 +14,8 @@ def read_level_progress(level_name) -> dict:
     with open(file_path,"rb") as level:
         return pickle.load(level)
     
-def save_level_progress(level_name,maze,enemies,items,player):
-    #salva progresso de arquivos niveis, 
+def save_level_progress(level_name,maze,enemies,items,posicoes_ocupadas,player=None):
+    #salva progresso de niveis, tanto quando o jogador morre quanto quando ele vence
     file_path = os.path.join("database/level_progress/",level_name + ".pkl")
     os.makedirs("database/level_progress/", exist_ok=True) # cria o diretorio caso nao exista
 
@@ -24,7 +24,15 @@ def save_level_progress(level_name,maze,enemies,items,player):
         "maze": maze,
         "enemies": enemies,
         "items": items,
-        "player": player
+        "player": player,
+        "posicoes_ocupadas": posicoes_ocupadas
         }
 
         pickle.dump(level,save)
+
+
+def verify_save(name):
+    file_path = os.path.join("database/level_progress/",name + ".pkl")
+
+    if os.path.exists(file_path):
+        return True
