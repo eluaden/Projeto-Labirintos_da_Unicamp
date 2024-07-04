@@ -1,11 +1,11 @@
 import pygame.sprite
 
 class Jogador(pygame.sprite.Sprite):
-    def __init__(self, nome: str, vidas: int, pontos_total: int, labirinto_atual, posicao_atual: list, tempo_restante:int):
+    def __init__(self, nome: str, nota: int, pontos_total: int, labirinto_atual, posicao_atual: list, tempo_restante:int):
         self._nome = nome
-        self._vidas = vidas
+        self._nota = nota
         self._pontos_total = pontos_total
-        self._inventario = {"bombas":0}
+        self._inventario = {"bombas":[]}
         self._labirinto_atual = labirinto_atual
         self._posicao_atual = posicao_atual.copy()
         self._tempo_restante = tempo_restante
@@ -46,15 +46,15 @@ class Jogador(pygame.sprite.Sprite):
         return self._nome
 
     @property
-    def vidas(self):
-        return self._vidas
+    def nota(self):
+        return self._nota
 
-    @vidas.setter
-    def vidas(self, value):
+    @nota.setter
+    def nota(self, value):
         if 0 <= value <= 5:
-            self._vidas = value
+            self._nota = value
         else:
-            print("Número inválido de vidas. Deve estar entre 0 e 5.")
+            print("Número inválido de nota. Deve estar entre 0 e 5.")
     
     @property
     def pontos_total(self):
@@ -117,16 +117,16 @@ class Jogador(pygame.sprite.Sprite):
                 
                 
     def aumentar_vida(self):
-        if self.vidas < 5:
-            self.vidas += 1
+        if self.nota < 10:
+            self.nota += 1
         else:
-            print("O jogador já tem o máximo de vidas (5).")
+            print("O jogador já tem o máximo de nota (10).")
 
     def diminuir_vida(self):
-        if self.vidas > 0:
-            self.vidas -= 1
+        if self.nota > 0:
+            self.nota -= 1
         else:
-            print("O jogador já está sem vidas.")
+            print("O jogador já está sem nota.")
             
     def incrementar_pontos(self,pontos:int):
         self._pontos_total += pontos
@@ -146,7 +146,7 @@ class Jogador(pygame.sprite.Sprite):
             
     def status(self):
         print(f"""
-              vidas restantes: {self._vidas}
+              nota restantes: {self._nota}
               pontos: {self._pontos_total}
               labirinto atual: {self._labirinto_atual}
     """)
