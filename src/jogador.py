@@ -12,15 +12,15 @@ class Jogador(pygame.sprite.Sprite):
 
         # Carregue as imagens para a animação do jogador
         self.imagens = [
-            pygame.image.load('animation-master/attack_1.png').convert_alpha(),
-            pygame.image.load('animation-master/attack_2.png').convert_alpha(),
-            pygame.image.load('animation-master/attack_3.png').convert_alpha(),
-            pygame.image.load('animation-master/attack_4.png').convert_alpha(),
-            pygame.image.load('animation-master/attack_5.png').convert_alpha(),
-            pygame.image.load('animation-master/attack_6.png').convert_alpha(),
-            pygame.image.load('animation-master/attack_7.png').convert_alpha(),
-            pygame.image.load('animation-master/attack_8.png').convert_alpha(),
-            pygame.image.load('animation-master/attack_9.png').convert_alpha(),
+            pygame.image.load('assets/attack_1.png').convert_alpha(),
+            pygame.image.load('assets/attack_2.png').convert_alpha(),
+            pygame.image.load('assets/attack_3.png').convert_alpha(),
+            pygame.image.load('assets/attack_4.png').convert_alpha(),
+            pygame.image.load('assets/attack_5.png').convert_alpha(),
+            pygame.image.load('assets/attack_6.png').convert_alpha(),
+            pygame.image.load('assets/attack_7.png').convert_alpha(),
+            pygame.image.load('assets/attack_8.png').convert_alpha(),
+            pygame.image.load('assets/attack_9.png').convert_alpha(),
             
             # Adicione mais imagens conforme necessário para a animação
         ]

@@ -22,7 +22,7 @@ margem_esquerda = (LARGURA_JANELA - (NUMERO_COLUNAS * (TAMANHO_QUADRADO + ESPACO
 margem_topo = (ALTURA_JANELA - (NUMERO_LINHAS * (TAMANHO_QUADRADO + ESPACO_ENTRE_QUADRADOS))) // 2
 
 # Carregar imagem do cadeado com transparência
-cadeado_img = pygame.image.load(os.path.join('animation-master/', 'cadeado.png')).convert_alpha()
+cadeado_img = pygame.image.load(os.path.join('assets/', 'cadeado.png')).convert_alpha()
 # Redimensionar a imagem usando interpolação suave
 cadeado_img = pygame.transform.smoothscale(cadeado_img, (TAMANHO_QUADRADO - 40, TAMANHO_QUADRADO - 40))
 

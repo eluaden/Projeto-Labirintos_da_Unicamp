@@ -1,7 +1,6 @@
 import pygame
 import random
 from jogador import Jogador
-from moderador import Moderador
 from inimigos import Teacher, Statue
 from itens import Clock, Bomb
 from itens import Clock, Bomb, Book
@@ -33,7 +32,6 @@ class Level:
         self.posicoes_ocupadas = [] # posicoes do jogo que ja estao ocupadas, seja por item, seja por inimigo, seja por jogador
         self.professores = self.gerar_inimigos(inimigos["teachers"])
         self.itens = self.gerar_itens_aleatorios(itens["bombs"],itens["clocks"],itens["books"])
-        self.moderador = Moderador(self)
         self.clock = pygame.time.Clock()
         self.ultimo_tempo = pygame.time.get_ticks()  # Para rastrear o tempo
         self.media = media

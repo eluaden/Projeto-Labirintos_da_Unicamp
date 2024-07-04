@@ -2,6 +2,17 @@ import pygame
 import cv2
 import subprocess
 
+# Carregando a música
+
+pygame.mixer.init()
+
+pygame.mixer.music.load('assets/musica_inicial.mp3')
+
+pygame.mixer.music.play(loops=-1)
+
+pygame.mixer.music.set_volume(0.3)
+
+
 # Configurações do Pygame
 pygame.init()
 LARGURA_JANELA, ALTURA_JANELA = 1000, 700
@@ -9,7 +20,7 @@ TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA))
 pygame.display.set_caption('Tela Inicial')
 
 # Carregar o vídeo com OpenCV
-video = cv2.VideoCapture('animation-master/video_labirinto6.mp4')
+video = cv2.VideoCapture('assets/video_labirinto6.mp4')
 
 # Fontes e cores 141, 8, 1
 fonte_titulo = pygame.font.Font(None, 80)
@@ -48,7 +59,7 @@ while rodando:
     ret, frame = video.read()
     if not ret:
         video.release()
-        video = cv2.VideoCapture('animation-master/video_labirinto6.mp4')  # Reinicia o vídeo ao chegar ao fim
+        video = cv2.VideoCapture('assets/video_labirinto6.mp4')  # Reinicia o vídeo ao chegar ao fim
         continue
 
     # Redimensionar o quadro do vídeo para as dimensões da tela
