@@ -26,16 +26,26 @@ LARANJA = (255, 165, 0)
 TAMANHO_CELULA = 40
 
 class Level:
-    def __init__(self,labirinto,itens,estruturas,tempo,estatuas = None):
+    def __init__(self,nome,labirinto,itens,inimigos,tempo,media,player = None,estatua = None):
+        self.nome = nome
         self.labirinto = labirinto
-        self.jogador = Jogador(nome="Player1",nota = 0, pontos_total=0, labirinto_atual=self.labirinto, posicao_atual=[1, 1], tempo_restante= tempo)
+
+        if player != None:
+            self.jogador = player
+        else:
+            self.jogador = Jogador(nome="Player1",nota = 0, pontos_total=0, labirinto_atual=self.labirinto, posicao_atual=[1, 1], tempo_restante= tempo)
+    
         self.posicoes_ocupadas = [] # posicoes do jogo que ja estao ocupadas, seja por item, seja por inimigo, seja por jogador
-        self.professores = self.gerar_inimigos_aleatorios(estruturas["teachers"])
-        self.estatuas = [Statue(nome="Statue1", position=(3, 3))]
+        self.professores = self.gerar_inimigos_aleatorios(inimigos["teachers"])
+        if estatua:
+            self.estatuas = estatua
         self.itens = self.gerar_itens_aleatorios(itens["bombs"],itens["clocks"],itens["books"])
         self.moderador = Moderador(self)
         self.clock = pygame.time.Clock()
         self.ultimo_tempo = pygame.time.get_ticks()  # Para rastrear o tempo
+        self.media = media
+        self.saida = next(((y,x) for x in range(len(self.labirinto)) for y in range(len(self.labirinto[0])) if self.labirinto[x][y] == 3), None)
+        print(f"Essa é a saída: {self.saida}")
         
         
 
@@ -73,8 +83,8 @@ class Level:
     
     def posicao_aleatoria(self):
         while True:
-            x = random.randint(1, len(self.labirinto) - 2)
-            y = random.randint(1, len(self.labirinto[0]) - 2)
+            x = random.randint(1, len(self.labirinto[0]) - 2)
+            y = random.randint(1, len(self.labirinto) - 2)
             if self.labirinto[y][x] == 0 and (x, y) not in self.posicoes_ocupadas:
                 self.posicoes_ocupadas.append((x, y))
                 return (x, y)
@@ -94,7 +104,7 @@ class Level:
         for professor in self.professores:
             x, y = professor.position
             pygame.draw.rect(TELA, VERMELHO, (x * TAMANHO_CELULA, y * TAMANHO_CELULA, TAMANHO_CELULA, TAMANHO_CELULA))
-        if estatua != None:
+        if estatua:
             x, y = estatua.position
             pygame.draw.rect(TELA, VERMELHO, (x * TAMANHO_CELULA, y * TAMANHO_CELULA, TAMANHO_CELULA, TAMANHO_CELULA))    
 
@@ -129,13 +139,12 @@ class Level:
                 professor.wander(self.labirinto)
 
             if self.jogador.tempo_restante <= 0:
-                print("Fim de jogo!")
+                print("Seu tempo acabou!")
+                self.moderador.perdeu()
                 pygame.quit()
                 quit()
 
-    def atualizar_jogo(self):
-        self.moderador.verificar_colisao(self.jogador)
-    
+    def verificar_colisoes(self):
         # Verifique colisão com bombas
         #print(f"Esses são os itens:  {self.itens}")
         for bomba in self.itens["bombas"]:
@@ -155,6 +164,14 @@ class Level:
             if tuple(self.jogador.posicao_atual) == livro.position:
                 livro.special_action(self.jogador) # Adiciona a bomba ao inventário do jogador
                 self.itens["livros"].remove(livro)  # Remove a bomba da lista de itens
+
+        if tuple(self.jogador.posicao_atual) == self.saida:
+            if self.jogador.nota >= self.media:
+                print("Você passou de ano!")
+                pygame.quit()
+                quit()
+            else:
+                print("Faltam pontos para passar de ano!")
 
     def jogar(self):
         rodando = True
@@ -178,7 +195,7 @@ class Level:
                         
 
             self.atualizacao_por_segundo()
-            self.atualizar_jogo()
+            self.verificar_colisoes()
 
             # Atualize o jogador (incluindo a animação)
             self.jogador.update()

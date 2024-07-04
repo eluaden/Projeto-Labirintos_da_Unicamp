@@ -55,7 +55,9 @@ class Bomb(Item):
             if (new_x < len(player.labirinto_atual)-1 and new_x > 0) and \
                (new_y < len(player.labirinto_atual[0])-1 and new_y > 0):
                 
-                player.labirinto_atual[new_y][new_x] = 0
+                if player.labirinto_atual[new_y][new_x] == 1:
+                    player.labirinto_atual[new_y][new_x] = 0
+                
 
 class Book(Item):
     def __init__(self, posicao,on_inv = False) -> None:

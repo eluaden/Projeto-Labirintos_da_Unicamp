@@ -112,7 +112,7 @@ class Jogador(pygame.sprite.Sprite):
             nova_posicao = [x, y + 1]
 
         # Verificar se a nova posição é válida no labirinto
-        if self.labirinto_atual[nova_posicao[1]][nova_posicao[0]] == 0:
+        if self.labirinto_atual[nova_posicao[1]][nova_posicao[0]] != 1:
             self.posicao_atual = nova_posicao
                 
                 
