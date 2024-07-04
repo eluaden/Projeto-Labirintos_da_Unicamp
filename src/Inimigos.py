@@ -14,6 +14,7 @@ class Enemy: # classe base para Enemys,trata apenas da movimentação dele
         return self._nome
     
     def wander(self,maze):
+
         moves = [(0,1),(0,-1),(1,0),(-1,0)]
         pss_moves = []
         for move in moves:
@@ -22,8 +23,10 @@ class Enemy: # classe base para Enemys,trata apenas da movimentação dele
 
             if new_x < len(maze) and new_x >= 0 and new_y < len(maze[0]) and new_y >= 0:
                 if maze[new_x][new_y] == 0:
-                    pss_moves.append(move)                                   
-        move = pss_moves[randint(0,len(pss_moves)-1)]
+                    pss_moves.append(move)   
+        if pss_moves:                                
+            move = pss_moves[randint(0,len(pss_moves)-1)]
+        else: move = (0,0)
         self._pos = (self._pos[0] + move[0], self._pos[1] + move[1])
     
     def die(self,enemies):

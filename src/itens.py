@@ -22,6 +22,10 @@ class Clock(Item):
     def special_action(self, player):
         # adiciona 5 segundos no temporizador do jogador
         player.tempo_restante += 5
+    
+    @property
+    def position(self):
+        return self._pos
 
 
 class Bomb(Item):
@@ -43,6 +47,17 @@ class Bomb(Item):
                 
                 player.labirinto_atual[new_x][new_y] = 0
 
+class Book(Item):
+    def __init__(self, posicao,on_inv = False) -> None:
+        super().__init__(posicao,on_inv)
+    
+    def special_action(self, player):
+        # adiciona 5 segundos no temporizador do jogador
+        player.nota += 1
+
+    @property
+    def position(self):
+        return self._pos
     
 
 
