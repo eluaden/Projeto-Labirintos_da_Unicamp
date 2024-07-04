@@ -7,7 +7,7 @@ from itens import Clock, Bomb, Book
 from save import *
 # Configurações do Pygame
 pygame.init()
-LARGURA_JANELA, ALTURA_JANELA = 1000, 800
+LARGURA_JANELA, ALTURA_JANELA = 1200, 800
 TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA))
 pygame.display.set_caption('Os Labirintos da Unicamp')
 FPS = 30

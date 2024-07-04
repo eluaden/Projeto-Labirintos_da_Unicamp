@@ -15,21 +15,17 @@ LARGURA_JANELA, ALTURA_JANELA = 1200, 700
 TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA))
 pygame.display.set_caption('Novo Jogo')
 
-# Obtenha a resolução da tela
-user32 = ctypes.windll.user32
-screen_width = user32.GetSystemMetrics(0)
-screen_height = user32.GetSystemMetrics(1)
-
-print(screen_width)
-print(screen_height)
+# Obtenha as dimensões da tela do sistema
+screen_info = pygame.display.Info()
+screen_width, screen_height = screen_info.current_w, screen_info.current_h
 
 # Calcule a posição para centralizar a janela
 pos_x = (screen_width - LARGURA_JANELA) // 2
 pos_y = (screen_height - ALTURA_JANELA) // 2
 
-# Use ctypes para mover a janela para a posição desejada
-window = pygame.display.get_wm_info()['window']
-ctypes.windll.user32.SetWindowPos(window, 0, pos_x, pos_y, 0, 0, 0x0001)
+# Defina a posição da janela
+os.environ['SDL_VIDEO_WINDOW_POS'] = f"{pos_x},{pos_y}"
+print(f"SDL_VIDEO_WINDOW_POS = {os.environ['SDL_VIDEO_WINDOW_POS']}")
 
 # Inicialize o mixer
 pygame.mixer.init()
