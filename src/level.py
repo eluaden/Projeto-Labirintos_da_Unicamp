@@ -284,13 +284,14 @@ class Level:
                     self.professores.remove(professor)
                 else:
                     self.jogador.nota -= 1
-        if tuple(self.jogador.posicao_atual) == self.estatua.position:
-            pergunta = self.estatua.ask(self.nome)
-            if self.popup_pergunta(pergunta):
-                self.jogador.nota += 1
-                self.estatua = None
-            else:
-                self.jogador.nota -= 1
+        if self.estatua:
+            if tuple(self.jogador.posicao_atual) == self.estatua.position:
+                pergunta = self.estatua.ask(self.nome)
+                if self.popup_pergunta(pergunta):
+                    self.jogador.nota += 1
+                    self.estatua = None
+                else:
+                    self.jogador.nota -= 1
 
 
     def jogar(self):
