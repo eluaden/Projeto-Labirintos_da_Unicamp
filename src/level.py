@@ -319,7 +319,12 @@ class Level:
 
         start_time = pygame.time.get_ticks()
 
-        while pygame.time.get_ticks() - start_time < 3000:
+        pontuacao = self.jogador.nota * 30 + self.jogador.tempo_restante * 10
+
+        user = read_user(self.jogador.nome)
+
+        p_t = user["pontuacao"] + pontuacao
+        while pygame.time.get_ticks() - start_time < 4000:
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
                     pygame.quit()
@@ -330,10 +335,19 @@ class Level:
             fonte = pygame.font.SysFont(None, 36)
             if vitoria:
                 texto = fonte.render("Você passou de ano!", True, BRANCO)
+                pontos = fonte.render(f"Pontos na fase: {pontuacao}", True, BRANCO)
+                pontos_totais = fonte.render(f"Pontos totais: {p_t}", True, BRANCO)
             else:
                 texto = fonte.render("Você reprovou", True, BRANCO)
+
             texto_rect = texto.get_rect(center=(x_popup + largura // 2, y_popup + 50))
+
+            pontos_rect = pontos.get_rect(center=(x_popup + largura // 2, y_popup + 80))
+
+            totais_rect = pontos_totais.get_rect(center=(x_popup + largura // 2, y_popup + 110))
             TELA.blit(texto, texto_rect)
+            TELA.blit(pontos, pontos_rect)
+            TELA.blit(pontos_totais, totais_rect)
 
             pygame.display.flip()
 
@@ -366,7 +380,27 @@ class Level:
         carregar_jogo(self.jogador.nome)
 
 
-     
+    def popup_insuficiente(self):
+        largura,altura = 400,300
+        x_popup = (LARGURA_JANELA - largura) // 2
+        y_popup = (ALTURA_JANELA - altura) // 2
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        TELA.fill(PRETO)
+        pygame.draw.rect(TELA, LARANJA, (x_popup, y_popup, largura, altura))
+        pygame.draw.rect(TELA, BRANCO, (x_popup, y_popup, largura, altura), 5)
+        fonte = pygame.font.SysFont(None, 36)
+        
+        texto = fonte.render("Nota Insufuciente!", True, BRANCO)
+
+        totais_rect = texto.get_rect(center=(x_popup + largura // 2, y_popup + 110))
+        TELA.blit(texto, totais_rect)
+
+        pygame.display.flip()
+
     def verificar_colisoes(self):
         for bomba in self.itens["bombas"]:
             if tuple(self.jogador.posicao_atual) == bomba.position and not bomba.on_inv:
@@ -390,6 +424,8 @@ class Level:
                 self.venceu()
                 pygame.quit()
                 quit()
+            else:
+                self.popup_insuficiente()
         
         for professor in self.professores:
             if abs(self.jogador.posicao_atual[0] - professor.position[0]) + abs(self.jogador.posicao_atual[1] - professor.position[1]) <= 1:
@@ -399,6 +435,7 @@ class Level:
                     self.professores.remove(professor)
                 else:
                     self.jogador.nota -= 1
+
         if self.estatua:
             if self.jogador.posicao_atual == self.estatua.position:
                 pergunta = self.estatua.ask(self.nome)
