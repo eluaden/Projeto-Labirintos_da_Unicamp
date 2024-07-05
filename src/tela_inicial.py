@@ -95,6 +95,43 @@ def abrir_novo_jogo():
 def carregar_jogo1():
     carregar_jogo()
 
+def tela_infos():
+    texto = 'O Labirinto é um jogo educativo desenvolvido por alunos\ndo curso de Ciência de Computação da Universidade Estadual de Campinas,\npara o projeto 3 da disciplina de algoritimos e programação de computadores. \nSim, acabamos de entrar na faculdade e ja estamos fazendo um JOGO!!\nRegras: \n-Obter pontos através de perguntas de professores, e livros\n-Utilizar desses pontos pra passar de ano(Férias)\n-Usar as bombas para explodir paredes\n-Fazer tudo isso sem o tempo estourar!\n \nTodas as artes do jogo, ou pelo menos a maioria foi feita por nós,\n incluindo também a musica.\n Gostariamos de agradecer ao professor e aos peds pelo ótimo semestre. \n(E ao chat GPT por ensinar pygames do zero pra gente).\n Enjoy the GAME! \n Assinado: Rafael Feltrin () e Lucas Guimarães 195948'
+
+    botao_voltar = fonte_opcoes.render('Voltar', True, cor_texto_normal)
+    botao_voltar_rect = botao_voltar.get_rect(center=(LARGURA_JANELA // 2, ALTURA_JANELA * 7 // 8))
+    
+
+    while True:
+        for event in pygame.event.get():
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if botao_voltar_rect.collidepoint(mouse_x, mouse_y):
+                botao_voltar = fonte_opcoes.render('Voltar', True, cor_texto_hover)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    return
+            else:
+                botao_voltar = fonte_opcoes.render('Voltar', True, cor_texto_normal)
+            
+            
+
+        TELA.fill(cor_fundo_texto)
+        
+        #quebrando texto
+        lines = texto.split('\n')
+        for i, line in enumerate(lines):
+            line = fonte_opcoes.render(line, True, cor_texto_normal)
+            line_rect = line.get_rect(center=(LARGURA_JANELA // 2, ALTURA_JANELA // 15 + i * 35))
+            TELA.blit(line, line_rect)
+
+
+        TELA.blit(botao_voltar, botao_voltar_rect)
+        pygame.display.flip()
+
+
+
 # Loop principal
 def main():
     video = cv2.VideoCapture('assets/video_labirinto6.mp4')
@@ -153,6 +190,8 @@ def main():
         if posicao_opcao_informacoes[0] <= mouse_x <= posicao_opcao_informacoes[0] + largura_opcoes and \
         posicao_opcao_informacoes[1] <= mouse_y <= posicao_opcao_informacoes[1] + altura_opcoes:
             opcao_informacoes = fonte_opcoes.render('Informações', True, cor_texto_hover)
+            if pygame.mouse.get_pressed()[0]:
+                tela_infos()
         else:
             opcao_informacoes = fonte_opcoes.render('Informações', True, cor_texto_normal)
 

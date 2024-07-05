@@ -1,6 +1,8 @@
 import pickle
 import os
-# tem q ser chamado fora da pasta src**
+# todos tem q ser chamados fora da pasta src**
+
+#le o as infos padrao de um nivel
 def read_level_base(level_name) -> dict:
     #le os arquivos base de niveis
     file_path = os.path.join("database/level_base/",level_name + ".pkl")
@@ -8,8 +10,9 @@ def read_level_base(level_name) -> dict:
         print(type(level))
         return pickle.load(level)
 
+#para salvar um novo usuario no database, com progresso passado por parametros
 def save_user(usuario,nivel_1,nivel_2,nivel_3,nivel_4,nivel_5,nivel_6,nivel_7,nivel_8,nivel_9,nivel_10,ultimo_nivel,pontuacao) -> None:
-    #salva o progresso do usuario
+
     file_path = os.path.join("database/users/",usuario + ".pkl")
     os.makedirs("database/users/", exist_ok=True) # cria o diretorio caso nao exista
     user = {
@@ -32,6 +35,7 @@ def save_user(usuario,nivel_1,nivel_2,nivel_3,nivel_4,nivel_5,nivel_6,nivel_7,ni
         pickle.dump(user,user_file)
 
 
+#para ler um usuario do database
 def read_user(usuario):
     file_path = os.path.join("database/users/",usuario + ".pkl")
     if os.path.exists(file_path):
@@ -40,6 +44,7 @@ def read_user(usuario):
     else:
         return False
     
+# para ler alguma pergunta do database
 def read_pergunta(nivel):
     path = os.path.join("database/perguntas/", nivel + ".pkl")
     with open(path, "rb") as f:
