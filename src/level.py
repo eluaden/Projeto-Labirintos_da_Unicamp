@@ -6,7 +6,7 @@ from itens import Clock, Bomb, Book
 
 # Configurações do Pygame
 pygame.init()
-LARGURA_JANELA, ALTURA_JANELA = 1200, 800  # Ajustado para as novas dimensões da tela
+LARGURA_JANELA, ALTURA_JANELA = 1200, 700  # Ajustado para as novas dimensões da tela
 TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA))
 pygame.display.set_caption('Os Labirintos da Unicamp')
 FPS = 30
@@ -23,9 +23,10 @@ LARANJA = (255, 165, 0)
 
 # Dimensões do labirinto
 TAMANHO_CELULA = 70
+INFO_HEIGHT = 50  # Altura da área de informações
 
 class Level:
-    def __init__(self, nome,nome_usr, labirinto, itens, inimigos, tempo, media, estatua=None):
+    def __init__(self, nome, nome_usr, labirinto, itens, inimigos, tempo, media, estatua=None):
         self.nome = nome
         self.labirinto = labirinto
         self.posicoes_ocupadas = []
@@ -82,44 +83,62 @@ class Level:
         for y, linha in enumerate(self.labirinto):
             for x, celula in enumerate(linha):
                 cor = BRANCO if celula == 0 else LARANJA if celula == 2 else ROXO if celula == 3 else PRETO
-                pygame.draw.rect(TELA, cor, ((x * TAMANHO_CELULA) - self.camera_x, (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+                pygame.draw.rect(TELA, cor, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+        
+        # Desenhar a primeira fileira sempre preta
+        for x in range(len(self.labirinto[0])):
+            pygame.draw.rect(TELA, PRETO, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+
 
     def desenhar_jogador(self):
         x, y = self.jogador.posicao_atual
-        pygame.draw.rect(TELA, AZUL, ((x * TAMANHO_CELULA) - self.camera_x, (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+        pygame.draw.rect(TELA, AZUL, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
 
     def desenhar_inimigos(self):
         for professor in self.professores:
             x, y = professor.position
-            pygame.draw.rect(TELA, VERMELHO, ((x * TAMANHO_CELULA) - self.camera_x, (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+            pygame.draw.rect(TELA, VERMELHO, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
         if self.estatua:
             x, y = self.estatua.position
-            pygame.draw.rect(TELA, VERMELHO, ((x * TAMANHO_CELULA) - self.camera_x, (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+            pygame.draw.rect(TELA, VERMELHO, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
 
     def desenhar_itens(self):
         for tipo_item, itens in self.itens.items():
             cor = AMARELO if tipo_item == 'livros' else VERDE if tipo_item == 'relogios' else VERMELHO
             for item in itens:
                 x, y = item.position
-                pygame.draw.rect(TELA, cor, ((x * TAMANHO_CELULA) - self.camera_x, (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+                pygame.draw.rect(TELA, cor, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
 
     def desenhar_informacoes(self):
         fonte = pygame.font.SysFont(None, 36)
+        texto_nome = fonte.render(f'Nome: {self.jogador.nome}', True, BRANCO)
         texto_nota = fonte.render(f'Nota: {self.jogador.nota}', True, BRANCO)
         texto_tempo = fonte.render(f'Tempo: {self.jogador.tempo_restante}', True, BRANCO)
         texto_bombas = fonte.render(f'Bombas: {len(self.jogador.inventario["bombas"])}', True, BRANCO)
-        TELA.blit(texto_nota, (700, 40))
-        TELA.blit(texto_tempo, (700, 60))
-        TELA.blit(texto_bombas, (700, 80))
+
+        for x in range(0, 1201, 50):  # Começa do 0, vai até 1200 com passo de 50
+            pygame.draw.rect(TELA, PRETO, (x, 0, 50, 50))
+
+        TELA.blit(texto_nome, (20, 10))
+        TELA.blit(texto_nota, (300, 10))
+        TELA.blit(texto_tempo, (500, 10))
+        TELA.blit(texto_bombas, (700, 10))
+        
 
     def atualizar_camera(self):
         jogador_x, jogador_y = self.jogador.posicao_atual
-        self.camera_x = jogador_x * TAMANHO_CELULA - LARGURA_JANELA // 2
-        self.camera_y = jogador_y * TAMANHO_CELULA - ALTURA_JANELA // 2
+
+        # Calcula a posição desejada da câmera
+        target_camera_x = jogador_x * TAMANHO_CELULA - LARGURA_JANELA // 2
+        target_camera_y = jogador_y * TAMANHO_CELULA - (ALTURA_JANELA - INFO_HEIGHT) // 2
+
+        # Interpolação suave para suavizar o movimento da câmera
+        self.camera_x += (target_camera_x - self.camera_x) * 0.1
+        self.camera_y += (target_camera_y - self.camera_y) * 0.1
 
         # Limita o deslocamento da câmera para que não mostre áreas fora do labirinto
         self.camera_x = max(0, min(self.camera_x, self.largura_labirinto - LARGURA_JANELA))
-        self.camera_y = max(0, min(self.camera_y, self.altura_labirinto - ALTURA_JANELA))
+        self.camera_y = max(0, min(self.camera_y, self.altura_labirinto - ALTURA_JANELA + INFO_HEIGHT))
 
     def atualizacao_por_segundo(self):
         agora = pygame.time.get_ticks()
@@ -195,6 +214,8 @@ class Level:
             self.clock.tick(FPS)
 
         pygame.quit()
+
+
 
 
 

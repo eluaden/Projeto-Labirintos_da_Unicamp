@@ -8,23 +8,15 @@ from carregar_jogo import carregar_jogo
 # Inicialize o Pygame
 pygame.init()
 
-# Obtenha as dimensões da tela do sistema
-screen_info = pygame.display.Info()
-screen_width, screen_height = screen_info.current_w, screen_info.current_h
-
 # Defina as dimensões da janela
 LARGURA_JANELA, ALTURA_JANELA = 1200, 700
 
-# Calcule a posição para centralizar a janela
-pos_x = (screen_width - LARGURA_JANELA) // 2
-pos_y = (screen_height - ALTURA_JANELA) // 2
+# Defina a posição inicial da janela
+POS_X, POS_Y = 100, 50  # Exemplo de posição (100 pixels à direita, 50 pixels abaixo do canto superior esquerdo)
 
-# Defina a posição da janela
-os.environ['SDL_VIDEO_WINDOW_POS'] = f"{pos_x},{pos_y}"
-print(f"SDL_VIDEO_WINDOW_POS = {os.environ['SDL_VIDEO_WINDOW_POS']}")
+# Crie a tela do Pygame com posição inicial definida
+TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA), 0, 32)
 
-# Dimensões da tela
-TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA))
 pygame.display.set_caption('Novo Jogo')
 
 # Inicialize o mixer
