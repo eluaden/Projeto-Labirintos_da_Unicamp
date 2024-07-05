@@ -111,7 +111,7 @@ def novo_jogo():
                     save_user(input_box.text,None,None,None,None,None,None,None,None,None,None,1, 0)
                     level_1 = read_level_base("level_10")
                     pygame.mixer.music.pause() 
-                    jogo = Level("level_10",level_1["maze"],level_1["items"],level_1["enemies"],level_1["time"],level_1["media"])
+                    jogo = Level("level_10",input_box.text,level_1["maze"],level_1["items"],level_1["enemies"],level_1["time"],level_1["media"])
                     jogo.jogar()
 
         # Efeito de hover no botão

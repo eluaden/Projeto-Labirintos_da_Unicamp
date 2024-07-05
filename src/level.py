@@ -25,7 +25,7 @@ LARANJA = (255, 165, 0)
 TAMANHO_CELULA = 70
 
 class Level:
-    def __init__(self, nome, labirinto, itens, inimigos, tempo, media, estatua=None):
+    def __init__(self, nome,nome_usr, labirinto, itens, inimigos, tempo, media, estatua=None):
         self.nome = nome
         self.labirinto = labirinto
         self.posicoes_ocupadas = []
@@ -36,7 +36,7 @@ class Level:
         self.media = media
         self.estatua = estatua
         self.saida = next(((y, x) for x in range(len(self.labirinto)) for y in range(len(self.labirinto[0])) if self.labirinto[x][y] == 3), None)
-        self.jogador = Jogador(nome="Player1", nota=0, pontos_total=0, labirinto_atual=self.labirinto, posicao_atual=[1, 1], tempo_restante=tempo)
+        self.jogador = Jogador(nome=nome_usr, nota=0, pontos_total=0, labirinto_atual=self.labirinto, posicao_atual=[1, 1], tempo_restante=tempo)
 
         # Dimensões do labirinto em pixels
         self.largura_labirinto = len(self.labirinto[0]) * TAMANHO_CELULA
