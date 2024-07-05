@@ -116,7 +116,7 @@ def novo_jogo():
                     jogo.jogar()
                     """
                     if not read_user(input_box.text):
-                        save_user(input_box.text,None,None,None,None,None,None,None,None,None,None,1,0)
+                        save_user(input_box.text,None,None,None,None,None,None,None,None,None,None,3,0)
 
                     carregar_jogo(input_box.text)
         # Efeito de hover no botão

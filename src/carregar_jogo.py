@@ -81,7 +81,52 @@ def carregar_jogo(nome_usuario):
                             if fase >= 1 and fase_selecionada == 1:
                                 print('entrouuu')
                                 level_1 = read_level_base("level_1")
-                                jogo = Level("level_1",level_1["maze"],level_1["items"],level_1["enemies"],level_1["time"],level_1["media"])
+                                jogo = Level("level_1",nome_usuario,level_1["maze"],level_1["items"],level_1["enemies"],level_1["time"],level_1["media"])
+                                jogo.jogar()
+                            if fase >= 2 and fase_selecionada == 2:
+                                print('entrouuu')
+                                level_2 = read_level_base("level_2")
+                                jogo = Level("level_2",nome_usuario,level_2["maze"],level_2["items"],level_2["enemies"],level_2["time"],level_2["media"])
+                                jogo.jogar()
+                            if fase >= 3 and fase_selecionada == 3:
+                                print('entrouuu')
+                                level_3 = read_level_base("level_3")
+                                jogo = Level("level_3",nome_usuario,level_3["maze"],level_3["items"],level_3["enemies"],level_3["time"],level_3["media"])
+                                jogo.jogar()
+                            if fase >= 4 and fase_selecionada == 4:
+                                print('entrouuu')
+                                level_4 = read_level_base("level_4")
+                                jogo = Level("level_4",nome_usuario,level_4["maze"],level_4["items"],level_4["enemies"],level_4["time"],level_4["media"])
+                                jogo.jogar()
+                            if fase >= 5 and fase_selecionada == 5:
+                                print('entrouuu')
+                                level_5 = read_level_base("level_5")
+                                jogo = Level("level_5",nome_usuario,level_5["maze"],level_5["items"],level_5["enemies"],level_5["time"],level_5["media"])
+                                jogo.jogar()
+                            if fase >= 6 and fase_selecionada == 6:
+                                print('entrouuu')
+                                level_6 = read_level_base("level_6")
+                                jogo = Level("level_6",nome_usuario,level_6["maze"],level_6["items"],level_6["enemies"],level_6["time"],level_6["media"])
+                                jogo.jogar()
+                            if fase >= 7 and fase_selecionada == 7:
+                                print('entrouuu')
+                                level_7 = read_level_base("level_7")
+                                jogo = Level("level_7",nome_usuario,level_7["maze"],level_7["items"],level_7["enemies"],level_7["time"],level_7["media"])
+                                jogo.jogar()
+                            if fase >= 8 and fase_selecionada == 8:
+                                print('entrouuu')
+                                level_8 = read_level_base("level_8")
+                                jogo = Level("level_8",nome_usuario,level_8["maze"],level_8["items"],level_8["enemies"],level_8["time"],level_8["media"])
+                                jogo.jogar()
+                            if fase >= 9 and fase_selecionada == 9:
+                                print('entrouuu')
+                                level_9 = read_level_base("level_9")
+                                jogo = Level("level_9",nome_usuario,level_9["maze"],level_9["items"],level_9["enemies"],level_9["time"],level_9["media"])
+                                jogo.jogar()
+                            if fase >= 10 and fase_selecionada == 10:
+                                print('entrouuu')
+                                level_10 = read_level_base("level_10")
+                                jogo = Level("level_10",nome_usuario,level_10["maze"],level_10["items"],level_10["enemies"],level_10["time"],level_10["media"])
                                 jogo.jogar()
 
 
