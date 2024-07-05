@@ -1,9 +1,11 @@
 import pygame
 import os
+from save import *
+from level import Level
 
 # Configurações do Pygame
 pygame.init()
-LARGURA_JANELA, ALTURA_JANELA = 1000, 700
+LARGURA_JANELA, ALTURA_JANELA = 1200, 700
 TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA))
 pygame.display.set_caption('Tela de Seleção de Fases')
 
@@ -27,7 +29,7 @@ cadeado_img = pygame.image.load(os.path.join('assets/', 'cadeado.png')).convert_
 cadeado_img = pygame.transform.smoothscale(cadeado_img, (TAMANHO_QUADRADO - 40, TAMANHO_QUADRADO - 40))
 
 # Função para desenhar os quadrados na tela
-def desenhar_tela():
+def desenhar_tela(nome_usuario):
     TELA.fill(COR_FUNDO)
     
     # Desenhar título
@@ -46,7 +48,7 @@ def desenhar_tela():
             pygame.draw.rect(TELA, cor, rect)
             # Exemplo: número da fase ou cadeado (simbolizado por um retângulo preto)
             fase = linha * NUMERO_COLUNAS + coluna + 1
-            if fase <= 3:  # Exemplo: Liberar as 5 primeiras fases
+            if fase <= read_user(nome_usuario)['ultimo_nivel']:  # Exemplo: Liberar as 5 primeiras fases
                 texto = pygame.font.SysFont(None, 36).render(str(fase), True, (0, 0, 0))
                 largura_texto, altura_texto = texto.get_size()
                 TELA.blit(texto, (x + (TAMANHO_QUADRADO - largura_texto) // 2, y + (TAMANHO_QUADRADO - altura_texto) // 2))
@@ -54,28 +56,43 @@ def desenhar_tela():
                 TELA.blit(cadeado_img, (x + 20, y + 20))  # Desenhar cadeado sobre quadrados não liberados
 
 # Loop principal
-rodando = True
-while rodando:
-    for evento in pygame.event.get():
-        if evento.type == pygame.QUIT:
-            rodando = False
-        elif evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1:
-            x, y = pygame.mouse.get_pos()
-            for linha in range(NUMERO_LINHAS):
-                for coluna in range(NUMERO_COLUNAS):
-                    x_quad = margem_esquerda + coluna * (TAMANHO_QUADRADO + ESPACO_ENTRE_QUADRADOS)
-                    y_quad = margem_topo + linha * (TAMANHO_QUADRADO + ESPACO_ENTRE_QUADRADOS)
-                    rect = pygame.Rect(x_quad, y_quad, TAMANHO_QUADRADO, TAMANHO_QUADRADO)
-                    if rect.collidepoint(x, y):
-                        fase_selecionada = linha * NUMERO_COLUNAS + coluna + 1
-                        print(f"Clicou na fase {fase_selecionada}")
-                        # Implemente aqui a ação desejada ao clicar (abrir fase, mostrar informações, etc.)
 
-    desenhar_tela()
-    pygame.display.flip()
+def carregar_jogo(nome_usuario):
+    rodando = True
+    print(nome_usuario)
+    print(read_user(nome_usuario))
+    fase = read_user(nome_usuario)['ultimo_nivel']
+    print(f"fase: {fase}")
+    while rodando:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                rodando = False
+            elif evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1:
+                x, y = pygame.mouse.get_pos()
+                for linha in range(NUMERO_LINHAS):
+                    for coluna in range(NUMERO_COLUNAS):
+                        x_quad = margem_esquerda + coluna * (TAMANHO_QUADRADO + ESPACO_ENTRE_QUADRADOS)
+                        y_quad = margem_topo + linha * (TAMANHO_QUADRADO + ESPACO_ENTRE_QUADRADOS)
+                        rect = pygame.Rect(x_quad, y_quad, TAMANHO_QUADRADO, TAMANHO_QUADRADO)
+                        if rect.collidepoint(x, y):
+                            fase_selecionada = linha * NUMERO_COLUNAS + coluna + 1
+                            print(f"Clicou na fase {fase_selecionada}")
+                            # Implemente aqui a ação desejada ao clicar (abrir fase, mostrar informações, etc.)
+                            if fase >= 1 and fase_selecionada == 1:
+                                print('entrouuu')
+                                level_1 = read_level_base("level_1")
+                                jogo = Level("level_1",level_1["maze"],level_1["items"],level_1["enemies"],level_1["time"],level_1["media"])
+                                jogo.jogar()
 
-# Finaliza o Pygame
-pygame.quit()
 
+        desenhar_tela(nome_usuario)
+        pygame.display.flip()
+
+    # Finaliza o Pygame
+    pygame.quit()
+
+
+if __name__ == "__main__":
+    carregar_jogo()
 
 

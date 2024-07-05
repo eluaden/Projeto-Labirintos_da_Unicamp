@@ -3,6 +3,7 @@ import pygame.freetype
 import os
 from save import *
 from level import Level
+from carregar_jogo import carregar_jogo
 
 # Inicialize o Pygame
 pygame.init()
@@ -108,12 +109,16 @@ def novo_jogo():
                 if button_rect.collidepoint(event.pos):
                     print(f"Nome do jogador: {input_box.text}")
                     # Lógica após clicar no botão
+                    """
                     save_user(input_box.text,None,None,None,None,None,None,None,None,None,None,1, 0)
                     level_1 = read_level_base("level_10")
-                    pygame.mixer.music.pause() 
                     jogo = Level("level_10",level_1["maze"],level_1["items"],level_1["enemies"],level_1["time"],level_1["media"])
                     jogo.jogar()
+                    """
+                    if not read_user(input_box.text):
+                        save_user(input_box.text,None,None,None,None,None,None,None,None,None,None,1,0)
 
+                    carregar_jogo(input_box.text)
         # Efeito de hover no botão
         if button_rect.collidepoint(pygame.mouse.get_pos()):
             current_button_color = ORANGE
@@ -133,7 +138,7 @@ def novo_jogo():
     pygame.quit()
 
 if __name__ == "__main__":
-    main()
+    novo_jogo()
 
 
 

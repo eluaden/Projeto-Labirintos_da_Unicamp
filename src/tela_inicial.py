@@ -2,6 +2,7 @@ import pygame
 import cv2
 import os
 from novo_jogo import novo_jogo
+from carregar_jogo import carregar_jogo
 pygame.init()
 
 # Defina as dimensões da janela
@@ -97,9 +98,9 @@ else:
 def abrir_novo_jogo():
     novo_jogo()
 
-def carregar_jogo():
-    pygame.quit()
-    os.system('python3 src/carregar_jogo.py')
+def carregar_jogo1():
+    carregar_jogo()
+
 # Loop principal
 def main():
     video = cv2.VideoCapture('assets/video_labirinto6.mp4')
@@ -148,7 +149,7 @@ def main():
         posicao_opcao_carregar_jogo[1] <= mouse_y <= posicao_opcao_carregar_jogo[1] + altura_opcoes:
             opcao_carregar_jogo = fonte_opcoes.render('Carregar Jogo', True, cor_texto_hover)
             if pygame.mouse.get_pressed()[0]:  # Verifica se clicou com o botão esquerdo do mouse
-                carregar_jogo()
+                carregar_jogo1()
                 rodando = False  # Fecha o menu principal ao abrir o novo jogo
         else:
             opcao_carregar_jogo = fonte_opcoes.render('Carregar Jogo', True, cor_texto_normal)
