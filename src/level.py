@@ -87,7 +87,7 @@ class Level:
     def desenhar_jogador(self):
         x, y = self.jogador.posicao_atual
         pygame.draw.rect(TELA, AZUL, ((x * TAMANHO_CELULA) - self.camera_x, (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
-
+    
     def desenhar_inimigos(self):
         for professor in self.professores:
             x, y = professor.position
@@ -111,6 +111,54 @@ class Level:
         TELA.blit(texto_nota, (700, 40))
         TELA.blit(texto_tempo, (700, 60))
         TELA.blit(texto_bombas, (700, 80))
+
+    def popup_pergunta(self, pergunta):
+        largura,altura = 400,300
+        x_popup = (LARGURA_JANELA - largura) // 2
+        y_popup = (ALTURA_JANELA - altura) // 2
+        while True:
+            for evento in pygame.event.get():
+                if evento.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                elif evento.type == pygame.MOUSEBUTTONDOWN:
+                    x, y = pygame.mouse.get_pos()
+                    # Verifica se o clique foi dentro do retângulo "Sim"
+                    if x_popup + 50 <= x <= x_popup + 150 and y_popup + altura - 100 <= y <= y_popup + altura - 50:
+                        
+                        return False
+                    # Verifica se o clique foi dentro do retângulo "Não"
+                    elif x_popup + 250 <= x <= x_popup + 350 and y_popup + altura - 100 <= y <= y_popup + altura - 50:
+                        
+                        return True
+
+            TELA.fill(PRETO)
+            pygame.draw.rect(TELA, LARANJA, (x_popup, y_popup, largura, altura))
+            pygame.draw.rect(TELA, BRANCO, (x_popup, y_popup, largura, altura), 5)
+            fonte = pygame.font.SysFont(None, 36)
+            texto = fonte.render(pergunta["pergunta"], True, BRANCO)
+            texto_rect = texto.get_rect(center=(x_popup + largura // 2, y_popup + 50))
+            TELA.blit(texto, texto_rect)
+
+            pygame.draw.rect(TELA, VERDE, (x_popup + 50, y_popup + altura - 100, 100, 50))
+            pygame.draw.rect(TELA, BRANCO, (x_popup + 50, y_popup + altura - 100, 100, 50), 3)
+            fonte = pygame.font.SysFont(None, 36)
+            texto = fonte.render(str(pergunta["resposta_errada"]), True, BRANCO)
+            texto_rect = texto.get_rect(center=(x_popup + 100, y_popup + altura - 75))
+            TELA.blit(texto, texto_rect)
+
+            pygame.draw.rect(TELA, VERMELHO, (x_popup + 250, y_popup + altura - 100, 100, 50))
+            pygame.draw.rect(TELA, BRANCO, (x_popup + 250, y_popup + altura - 100, 100, 50), 3)
+            texto = fonte.render(str(pergunta["resposta_certa"]), True, BRANCO)
+            texto_rect = texto.get_rect(center=(x_popup + 300, y_popup + altura - 75))
+            TELA.blit(texto, texto_rect)
+
+
+            
+            self.atualizacao_por_segundo()
+            self.desenhar_informacoes()
+
+            pygame.display.flip()
 
     def atualizar_camera(self):
         jogador_x, jogador_y = self.jogador.posicao_atual
@@ -160,6 +208,16 @@ class Level:
                 quit()
             else:
                 print("Faltam pontos para passar de ano!")
+        
+        for professor in self.professores:
+            if abs(self.jogador.posicao_atual[0] - professor.position[0]) + abs(self.jogador.posicao_atual[1] - professor.position[1]) <= 1:
+                pergunta = professor.ask(self.nome)
+                if self.popup_pergunta(pergunta):
+                    self.jogador.nota += 1
+                    self.professores.remove(professor)
+                else:
+                    self.jogador.nota -= 1
+
 
     def jogar(self):
         rodando = True
