@@ -28,6 +28,8 @@ cadeado_img = pygame.image.load(os.path.join('assets/', 'cadeado.png')).convert_
 # Redimensionar a imagem usando interpolação suave
 cadeado_img = pygame.transform.smoothscale(cadeado_img, (TAMANHO_QUADRADO - 40, TAMANHO_QUADRADO - 40))
 
+FONT_BOTTON = pygame.freetype.SysFont("Arial", 20, True)
+
 # Função para desenhar os quadrados na tela
 def desenhar_tela(nome_usuario):
     TELA.fill(COR_FUNDO)
@@ -56,6 +58,15 @@ def desenhar_tela(nome_usuario):
                 TELA.blit(cadeado_img, (x + 20, y + 20))  # Desenhar cadeado sobre quadrados não liberados
 
 # Loop principal
+
+# Função para desenhar o botão
+def desenhar_botao(screen, text, rect, color):
+    pygame.draw.rect(screen, color, rect)
+    txt_surface, _ = FONT_BOTTON.render(text, (0,0,0))
+    screen.blit(txt_surface, (rect.x + (rect.width - txt_surface.get_width()) // 2, rect.y + (rect.height - txt_surface.get_height()) // 2))
+
+button_rect = pygame.Rect(550, 600, 100, 40)
+
 
 def carregar_jogo(nome_usuario):
     rodando = True
@@ -128,9 +139,23 @@ def carregar_jogo(nome_usuario):
                                 level_10 = read_level_base("level_10")
                                 jogo = Level("level_10",nome_usuario,level_10["maze"],level_10["items"],level_10["enemies"],level_10["time"],level_10["media"])
                                 jogo.jogar()
+            
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if button_rect.collidepoint(evento.pos):
+                    from tela_inicial import main
+                    main()
+                    print(f"Nome do jogador")
+
+        # Efeito de hover no botão
+        if button_rect.collidepoint(pygame.mouse.get_pos()):
+            current_button_color = (245, 189, 73)
+        else:
+            current_button_color = (248, 246, 246)
 
 
+        
         desenhar_tela(nome_usuario)
+        desenhar_botao(TELA, "Retornar", button_rect, current_button_color)
         pygame.display.flip()
 
     # Finaliza o Pygame
