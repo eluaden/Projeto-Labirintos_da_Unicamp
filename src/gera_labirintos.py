@@ -1,3 +1,5 @@
+#a ideia era ter um nivel aleatorio mas nao deu tempo
+
 from random import choice,randint
 
 def generate_maze(pos, maze, visited= None):

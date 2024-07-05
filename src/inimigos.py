@@ -1,4 +1,5 @@
 from random import randint
+from save import read_pergunta
 
 class Enemy: # classe base para Enemys,trata apenas da movimentação dele
     def __init__(self,nome,position) -> None:
@@ -12,11 +13,7 @@ class Enemy: # classe base para Enemys,trata apenas da movimentação dele
     @property
     def nome(self):
         return self._nome
-    
-    def die(self,enemies):
-        if self in enemies:
-            enemies.remove(self)
-        
+
  
 class Teacher(Enemy):
     def __init__(self, nome, position) -> None:
@@ -46,11 +43,11 @@ class Teacher(Enemy):
         else: move = (0,0)
         self._pos = (self._pos[0] + move[0], self._pos[1] + move[1])
     
-    def ask(self):
-        pass
+    def ask(self,nivel):
+        perguntas = read_pergunta(nivel)
+        pergunta = perguntas[randint(0,len(perguntas)-1)]
+        return pergunta
 
-    def die(self, enemies):
-        return super().die(enemies)
     
     
     
@@ -65,13 +62,9 @@ class Statue(Enemy):
     def nome(self):
         return self._nome
     
-    def wander(self, maze):
-        pass # esse tipo de Enemy não anda 
-    
     def ask(self):
-        pass
+        perguntas = read_pergunta(nivel)
+        pergunta = perguntas[randint(0,len(perguntas)-1)]
+        return pergunta
     
-    def die(self, enemies):
-        return super().die(enemies)
-
 

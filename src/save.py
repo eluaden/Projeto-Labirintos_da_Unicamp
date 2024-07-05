@@ -39,6 +39,12 @@ def read_user(usuario):
             return pickle.load(user_file)
     else:
         return False
+    
+def read_pergunta(nivel):
+    path = os.path.join("database/perguntas/", nivel + ".pkl")
+    with open(path, "rb") as f:
+        return pickle.load(f)
+
 
 
 
