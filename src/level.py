@@ -104,8 +104,7 @@ class Level:
                     TELA.blit(imagem_entrada, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
         
         # Desenhar a primeira fileira sempre preta
-        for x in range(len(self.labirinto[0])):
-            pygame.draw.rect(TELA, PRETO, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+        
 
 
     def desenhar_jogador(self):
