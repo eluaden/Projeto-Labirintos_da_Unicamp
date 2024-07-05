@@ -62,13 +62,9 @@ class Statue(Enemy):
     def nome(self):
         return self._nome
     
-    def wander(self, maze):
-        pass # esse tipo de Enemy não anda 
-    
     def ask(self):
-        pass
+        perguntas = read_pergunta(nivel)
+        pergunta = perguntas[randint(0,len(perguntas)-1)]
+        return pergunta
     
-    def die(self, enemies):
-        return super().die(enemies)
-
 
