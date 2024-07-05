@@ -322,7 +322,11 @@ class Level:
 
         user = read_user(self.jogador.nome)
 
-        p_t = user["pontuacao"] + pontuacao
+        if int(self.nome[6]) >= user["ultimo_nivel"]:
+            p_t = user["pontuacao"] + pontuacao
+        else:
+            p_t = user["pontuacao"]
+
         while pygame.time.get_ticks() - start_time < 4000:
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
@@ -355,10 +359,17 @@ class Level:
         pontuacao = self.jogador.nota * 30 + self.jogador.tempo_restante * 10
 
         user = read_user(self.jogador.nome)
-        if user["ultimo_nivel"] != 10 and int(self.nome[6]) >= user["ultimo_nivel"]:
+        if user["ultimo_nivel"] != 10:
             user["ultimo_nivel"] += 1 
-
-        user["pontuacao"] += pontuacao
+        
+        if int(self.nome[6]) == 0:
+            user["pontuacao"] += pontuacao
+        else:
+            if int(self.nome[6]) > user["ultimo_nivel"]:
+                user["pontuacao"] += pontuacao
+    
+            
+            
 
         save_user(user["nome"],None,None,None,None,None,None,None,None,None,None,user["ultimo_nivel"],user["pontuacao"])
 

@@ -2,6 +2,7 @@ import pygame
 import os
 from save import *
 from level import Level
+from nivel_extra import nivel_extra
 
 # Configurações do Pygame
 pygame.init()
@@ -65,7 +66,8 @@ def desenhar_botao(screen, text, rect, color):
     txt_surface, _ = FONT_BOTTON.render(text, (0,0,0))
     screen.blit(txt_surface, (rect.x + (rect.width - txt_surface.get_width()) // 2, rect.y + (rect.height - txt_surface.get_height()) // 2))
 
-button_rect = pygame.Rect(550, 600, 100, 40)
+retornar_button_rect = pygame.Rect(50, 600, 120, 40)
+nivel_extra_button_rect = pygame.Rect(1030, 600, 120, 40)
 
 
 def carregar_jogo(nome_usuario):
@@ -144,21 +146,34 @@ def carregar_jogo(nome_usuario):
                                 jogo.jogar()
             
             if evento.type == pygame.MOUSEBUTTONDOWN:
-                if button_rect.collidepoint(evento.pos):
+                if retornar_button_rect.collidepoint(evento.pos):
                     from tela_inicial import main
                     main()
                     print(f"Nome do jogador")
+                if nivel_extra_button_rect.collidepoint(evento.pos):
+                    nivel_extra(nome_usuario,usuario)
+
+        desenhar_tela(nome_usuario)
 
         # Efeito de hover no botão
-        if button_rect.collidepoint(pygame.mouse.get_pos()):
+        if retornar_button_rect.collidepoint(pygame.mouse.get_pos()):
             current_button_color = (245, 189, 73)
         else:
             current_button_color = (248, 246, 246)
 
+        desenhar_botao(TELA, "Retornar", retornar_button_rect, current_button_color)
+        #efeito de hover no botão nivel extra
+        if nivel_extra_button_rect.collidepoint(pygame.mouse.get_pos()):
+            current_button_color = (245, 189, 73)
+        else:
+            current_button_color = (248, 246, 246)
+
+        desenhar_botao(TELA, "Nivel Extra", nivel_extra_button_rect, current_button_color)
 
         
-        desenhar_tela(nome_usuario)
-        desenhar_botao(TELA, "Retornar", button_rect, current_button_color)
+        
+        
+        
         pygame.display.flip()
 
     # Finaliza o Pygame

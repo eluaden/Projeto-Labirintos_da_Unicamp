@@ -101,8 +101,3 @@ def print_maze(maze):
                 print(" ", end= " ")
 
         print()
-
-
-
-maze = create_maze(41,41)
-print_maze(maze)
