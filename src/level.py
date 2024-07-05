@@ -1,7 +1,7 @@
 import pygame
 import random
 from jogador import Jogador
-from inimigos import Teacher
+from inimigos import Teacher,Statue
 from itens import Clock, Bomb, Book
 from save import *
 import random
@@ -109,16 +109,21 @@ class Level:
 
 
     def desenhar_jogador(self):
+        jogador_img = pygame.image.load('assets/jogador.png')
+
         x, y = self.jogador.posicao_atual
-        pygame.draw.rect(TELA, AZUL, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+        TELA.blit(jogador_img, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
 
     def desenhar_inimigos(self):
+        professor_img = pygame.image.load('assets/professor.png')
+        estatua_img = pygame.image.load('assets/estatua.png')
+
         for professor in self.professores:
             x, y = professor.position
-            pygame.draw.rect(TELA, VERMELHO, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+            TELA.blit(professor_img, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
         if self.estatua:
             x, y = self.estatua.position
-            pygame.draw.rect(TELA, VERMELHO, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+            TELA.blit(estatua_img, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
 
     def desenhar_itens(self):
         # Carregar as imagens dos itens
@@ -302,6 +307,7 @@ class Level:
 
             if self.jogador.tempo_restante <= 0:
                 self.popup_final(False)
+                self.perdeu()
                 pygame.quit()
                 quit()
 
@@ -330,17 +336,33 @@ class Level:
             TELA.blit(texto, texto_rect)
 
             pygame.display.flip()
-        numero = int(self.nome[6])
-        pontuacao = self.jogador.nota*30 + self.jogador.tempo_restante*10
 
-        anterior_nivel = read_user(self.jogador.nome)["ultimo_nivel"]
-        anterior_pontuacao = read_user(self.jogador.nome)["pontuacao"]
+
+    def venceu(self):
+        pontuacao = self.jogador.nota * 30 + self.jogador.tempo_restante * 10
+
+        user = read_user(self.jogador.nome)
+        if user["ultimo_nivel"] != 10 and int(self.nome[6]) >= user["ultimo_nivel"]:
+            user["ultimo_nivel"] += 1 
+
+        user["pontuacao"] += pontuacao
+
+        save_user(user["nome"],None,None,None,None,None,None,None,None,None,None,user["ultimo_nivel"],user["pontuacao"])
+
         from carregar_jogo import carregar_jogo
-        if numero > anterior_pontuacao:
-            save_user(self.jogador.nome,None,None,None,None,None,None,None,None,None,None,anterior_nivel+1,anterior_pontuacao+pontuacao)
-        else:
-            save_user(self.jogador.nome,None,None,None,None,None,None,None,None,None,None,anterior_nivel,anterior_pontuacao+pontuacao)
+        carregar_jogo(self.jogador.nome)
 
+    def perdeu(self):
+        estatua = Statue(self.jogador.nome,self.jogador.posicao_atual)
+        pontuacao = self.jogador.nota * 30 + self.jogador.tempo_restante * 10
+        user = read_user(self.jogador.nome)
+
+        user["pontuacao"] -= pontuacao
+        user[self.nome] = estatua
+        save_user(user["nome"],user["nivel_1"],user["nivel_2"],user["nivel_3"],user["nivel_4"],user["nivel_5"],\
+                  user["nivel_6"],user["nivel_7"],user["nivel_8"],user["nivel_9"],user["nivel_10"],user["ultimo_nivel"],user["pontuacao"])
+        
+        from carregar_jogo import carregar_jogo
         carregar_jogo(self.jogador.nome)
 
 
@@ -365,6 +387,7 @@ class Level:
         if tuple(self.jogador.posicao_atual) == self.saida:
             if self.jogador.nota >= self.media:
                 self.popup_final(True)
+                self.venceu()
                 pygame.quit()
                 quit()
         
@@ -377,13 +400,15 @@ class Level:
                 else:
                     self.jogador.nota -= 1
         if self.estatua:
-            if tuple(self.jogador.posicao_atual) == self.estatua.position:
+            if self.jogador.posicao_atual == self.estatua.position:
                 pergunta = self.estatua.ask(self.nome)
                 if self.popup_pergunta(pergunta):
                     self.jogador.nota += 1
+                    self.jogador.tempo_restante += 3
                     self.estatua = None
                 else:
-                    self.jogador.nota -= 1
+                    self.estatua = None
+                    self.jogador.tempo_restante -= 3
 
 
     def jogar(self):

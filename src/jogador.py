@@ -51,10 +51,10 @@ class Jogador(pygame.sprite.Sprite):
 
     @nota.setter
     def nota(self, value):
-        if 0 <= value <= 5:
+        if 0 <= value <= 10:
             self._nota = value
         else:
-            print("Número inválido de nota. Deve estar entre 0 e 5.")
+            print("Número inválido de nota. Deve estar entre 0 e 10.")
     
     @property
     def pontos_total(self):

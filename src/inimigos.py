@@ -62,7 +62,7 @@ class Statue(Enemy):
     def nome(self):
         return self._nome
     
-    def ask(self):
+    def ask(self,nivel):
         perguntas = read_pergunta(nivel)
         pergunta = perguntas[randint(0,len(perguntas)-1)]
         return pergunta
