@@ -13,7 +13,9 @@ def read_level_base(level_name) -> dict:
 #para salvar um novo usuario no database, com progresso passado por parametros
 def save_user(usuario,nivel_1,nivel_2,nivel_3,nivel_4,nivel_5,nivel_6,nivel_7,nivel_8,nivel_9,nivel_10,ultimo_nivel,pontuacao) -> None:
 
-    file_path = os.path.join("database/users/",usuario + ".pkl")
+    file_path_user = os.path.join("database/users/",usuario + ".pkl")
+    file_path_all_users = os.path.join("database/users/all_users.pkl")
+
     os.makedirs("database/users/", exist_ok=True) # cria o diretorio caso nao exista
     user = {
         "nome": usuario,
@@ -31,7 +33,18 @@ def save_user(usuario,nivel_1,nivel_2,nivel_3,nivel_4,nivel_5,nivel_6,nivel_7,ni
         "pontuacao": pontuacao
     }
 
-    with open(file_path,"wb") as user_file:
+    with open(file_path_all_users,"rb+") as all_users_file:
+        if os.path.getsize(file_path_all_users) > 0:
+            all_users = pickle.load(all_users_file)
+        else:
+            all_users = {}
+        
+        all_users[usuario] = user
+        
+        pickle.dump(all_users,all_users_file)
+        
+    with open(file_path_user,"wb") as user_file:
+        
         pickle.dump(user,user_file)
 
 
@@ -49,6 +62,13 @@ def read_pergunta(nivel):
     path = os.path.join("database/perguntas/", nivel + ".pkl")
     with open(path, "rb") as f:
         return pickle.load(f)
+
+def read_all_users():
+    file_path_all_users = os.path.join("database/users/all_users.pkl")
+    with open(file_path_all_users,"wb") as all_users_file:
+        
+        return pickle.load(all_users_file)
+    
 
 
 
