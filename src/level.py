@@ -247,10 +247,34 @@ class Level:
                 professor.wander(self.labirinto)
 
             if self.jogador.tempo_restante <= 0:
-                print("Seu tempo acabou!")
+                self.popup_final(False)
                 pygame.quit()
                 quit()
 
+
+    def popup_final(self, vitoria):
+        largura,altura = 400,300
+        x_popup = (LARGURA_JANELA - largura) // 2
+        y_popup = (ALTURA_JANELA - altura) // 2
+
+        while True:
+            for evento in pygame.event.get():
+                if evento.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+            TELA.fill(PRETO)
+            pygame.draw.rect(TELA, ROXO, (x_popup, y_popup, largura, altura))
+            pygame.draw.rect(TELA, BRANCO, (x_popup, y_popup, largura, altura), 5)
+            fonte = pygame.font.SysFont(None, 36)
+            if vitoria:
+                texto = fonte.render("Você passou de ano!", True, BRANCO)
+            else:
+                texto = fonte.render("Você reprovou", True, BRANCO)
+            texto_rect = texto.get_rect(center=(x_popup + largura // 2, y_popup + 50))
+            TELA.blit(texto, texto_rect)
+
+            pygame.display.flip()
+            
     def verificar_colisoes(self):
         for bomba in self.itens["bombas"]:
             if tuple(self.jogador.posicao_atual) == bomba.position and not bomba.on_inv:
@@ -270,11 +294,9 @@ class Level:
 
         if tuple(self.jogador.posicao_atual) == self.saida:
             if self.jogador.nota >= self.media:
-                print("Você passou de ano!")
+                self.popup_final(True)
                 pygame.quit()
                 quit()
-            else:
-                print("Faltam pontos para passar de ano!")
         
         for professor in self.professores:
             if abs(self.jogador.posicao_atual[0] - professor.position[0]) + abs(self.jogador.posicao_atual[1] - professor.position[1]) <= 1:
