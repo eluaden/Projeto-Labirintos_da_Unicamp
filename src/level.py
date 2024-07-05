@@ -3,6 +3,9 @@ import random
 from jogador import Jogador
 from inimigos import Teacher
 from itens import Clock, Bomb, Book
+from save import *
+
+
 
 # Configurações do Pygame
 pygame.init()
@@ -257,7 +260,9 @@ class Level:
         x_popup = (LARGURA_JANELA - largura) // 2
         y_popup = (ALTURA_JANELA - altura) // 2
 
-        while True:
+        start_time = pygame.time.get_ticks()
+
+        while pygame.time.get_ticks() - start_time < 3000:
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
                     pygame.quit()
@@ -274,7 +279,17 @@ class Level:
             TELA.blit(texto, texto_rect)
 
             pygame.display.flip()
-            
+
+        pontuacao = self.jogador.nota*30 + self.jogador.tempo_restante*10
+
+        anterior_nivel = read_user(self.jogador.nome)["ultimo_nivel"]
+        anterior_pontuacao = read_user(self.jogador.nome)["pontuacao"]
+        from carregar_jogo import carregar_jogo
+        save_user(self.jogador.nome,None,None,None,None,None,None,None,None,None,None,anterior_nivel+1,anterior_pontuacao+pontuacao)
+        carregar_jogo(self.jogador.nome)
+
+
+     
     def verificar_colisoes(self):
         for bomba in self.itens["bombas"]:
             if tuple(self.jogador.posicao_atual) == bomba.position and not bomba.on_inv:
