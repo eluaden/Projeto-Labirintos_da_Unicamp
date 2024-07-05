@@ -10,7 +10,7 @@ TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA))
 pygame.display.set_caption('Tela de Seleção de Fases')
 
 # Cores
-COR_FUNDO = (50, 48, 49)  # Branco
+COR_FUNDO = (2, 0, 12)  # Preto
 COR_QUADRADO = (217, 220, 214)  # Cinza para quadrados
 COR_QUADRADO_HOVER = (245, 189, 73)  # Cinza claro para hover
 COR_TITULO = (245, 189, 73)  # Branco para o título

@@ -4,7 +4,7 @@ from jogador import Jogador
 from inimigos import Teacher
 from itens import Clock, Bomb, Book
 from save import *
-
+import random
 
 
 # Configurações do Pygame
@@ -22,7 +22,8 @@ AZUL = (0, 0, 255)
 VERDE = (0, 255, 0)
 AMARELO = (255, 255, 0)
 ROXO = (128, 0, 128)
-LARANJA = (255, 165, 0)
+LARANJA = (245, 189, 73)
+ESCOLHA = (219, 58, 52)
 
 # Dimensões do labirinto
 TAMANHO_CELULA = 70
@@ -83,10 +84,24 @@ class Level:
                 return (x, y)
 
     def desenhar_labirinto(self):
+        imagem_parede = pygame.image.load('assets/parede.png')
+        imagem_chao = pygame.image.load('assets/chao.png')
+        imagem_saida = pygame.image.load('assets/saida.png')
+        imagem_entrada = pygame.image.load('assets/entrada.png')
+        imagem_entrada = pygame.transform.scale(imagem_entrada, (TAMANHO_CELULA, TAMANHO_CELULA))
+        imagem_saida = pygame.transform.scale(imagem_saida, (TAMANHO_CELULA, TAMANHO_CELULA))
+        imagem_chao = pygame.transform.scale(imagem_chao, (TAMANHO_CELULA, TAMANHO_CELULA))
+        imagem_parede = pygame.transform.scale(imagem_parede, (TAMANHO_CELULA, TAMANHO_CELULA))
         for y, linha in enumerate(self.labirinto):
             for x, celula in enumerate(linha):
-                cor = BRANCO if celula == 0 else LARANJA if celula == 2 else ROXO if celula == 3 else PRETO
-                pygame.draw.rect(TELA, cor, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+                if celula == 1:
+                    TELA.blit(imagem_parede, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
+                elif celula == 0:
+                    TELA.blit(imagem_chao, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
+                elif celula == 3:
+                    TELA.blit(imagem_saida, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
+                elif celula == 2:
+                    TELA.blit(imagem_entrada, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
         
         # Desenhar a primeira fileira sempre preta
         for x in range(len(self.labirinto[0])):
@@ -106,11 +121,26 @@ class Level:
             pygame.draw.rect(TELA, VERMELHO, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
 
     def desenhar_itens(self):
+        # Carregar as imagens dos itens
+        imagem_livro = pygame.image.load('assets/livro.png')
+        imagem_relogio = pygame.image.load('assets/relogio.png')
+        imagem_bomba = pygame.image.load('assets/bomba.png')
+
+        # Redimensionar as imagens para o tamanho desejado (opcional)
+        imagem_livro = pygame.transform.scale(imagem_livro, (TAMANHO_CELULA, TAMANHO_CELULA))
+        imagem_relogio = pygame.transform.scale(imagem_relogio, (TAMANHO_CELULA, TAMANHO_CELULA))
+        imagem_bomba = pygame.transform.scale(imagem_bomba, (TAMANHO_CELULA, TAMANHO_CELULA))
+
         for tipo_item, itens in self.itens.items():
             cor = AMARELO if tipo_item == 'livros' else VERDE if tipo_item == 'relogios' else VERMELHO
             for item in itens:
                 x, y = item.position
-                pygame.draw.rect(TELA, cor, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y, TAMANHO_CELULA, TAMANHO_CELULA))
+                if tipo_item == "bombas":
+                    TELA.blit(imagem_bomba, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
+                elif tipo_item == "relogios":
+                    TELA.blit(imagem_relogio, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
+                elif tipo_item == "livros":
+                    TELA.blit(imagem_livro, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
 
     def desenhar_informacoes(self):
         fonte = pygame.font.SysFont(None, 36)
@@ -129,9 +159,13 @@ class Level:
         
 
     def popup_pergunta(self, pergunta):
-        largura,altura = 400,300
+        largura, altura = 400, 300
         x_popup = (LARGURA_JANELA - largura) // 2
         y_popup = (ALTURA_JANELA - altura) // 2
+
+        # Escolha aleatória da posição da resposta errada
+        resposta_posicao = random.choice([True, False])
+
         while True:
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
@@ -139,14 +173,20 @@ class Level:
                     quit()
                 elif evento.type == pygame.MOUSEBUTTONDOWN:
                     x, y = pygame.mouse.get_pos()
-                    # Verifica se o clique foi dentro do retângulo "Sim"
-                    if x_popup + 50 <= x <= x_popup + 150 and y_popup + altura - 100 <= y <= y_popup + altura - 50:
-                        
-                        return False
-                    # Verifica se o clique foi dentro do retângulo "Não"
-                    elif x_popup + 250 <= x <= x_popup + 350 and y_popup + altura - 100 <= y <= y_popup + altura - 50:
-                        
-                        return True
+                    if resposta_posicao:
+                        # Verifica clique na resposta errada (à esquerda)
+                        if x_popup + 50 <= x <= x_popup + 150 and y_popup + altura - 100 <= y <= y_popup + altura - 50:
+                            return False
+                        # Verifica clique na resposta certa (à direita)
+                        elif x_popup + 250 <= x <= x_popup + 350 and y_popup + altura - 100 <= y <= y_popup + altura - 50:
+                            return True
+                    else:
+                        # Verifica clique na resposta errada (à direita)
+                        if x_popup + 250 <= x <= x_popup + 350 and y_popup + altura - 100 <= y <= y_popup + altura - 50:
+                            return False
+                        # Verifica clique na resposta certa (à esquerda)
+                        elif x_popup + 50 <= x <= x_popup + 150 and y_popup + altura - 100 <= y <= y_popup + altura - 50:
+                            return True
 
             TELA.fill(PRETO)
             pygame.draw.rect(TELA, LARANJA, (x_popup, y_popup, largura, altura))
@@ -156,26 +196,37 @@ class Level:
             texto_rect = texto.get_rect(center=(x_popup + largura // 2, y_popup + 50))
             TELA.blit(texto, texto_rect)
 
-            pygame.draw.rect(TELA, VERDE, (x_popup + 50, y_popup + altura - 100, 100, 50))
-            pygame.draw.rect(TELA, BRANCO, (x_popup + 50, y_popup + altura - 100, 100, 50), 3)
-            fonte = pygame.font.SysFont(None, 36)
-            texto = fonte.render(str(pergunta["resposta_errada"]), True, BRANCO)
-            texto_rect = texto.get_rect(center=(x_popup + 100, y_popup + altura - 75))
-            TELA.blit(texto, texto_rect)
+            # Definindo coordenadas com base na escolha aleatória
+            if resposta_posicao:
+                pygame.draw.rect(TELA, ESCOLHA, (x_popup + 50, y_popup + altura - 100, 100, 50))
+                pygame.draw.rect(TELA, BRANCO, (x_popup + 50, y_popup + altura - 100, 100, 50), 3)
+                texto = fonte.render(str(pergunta["resposta_errada"]), True, BRANCO)
+                texto_rect = texto.get_rect(center=(x_popup + 100, y_popup + altura - 75))
+                TELA.blit(texto, texto_rect)
 
-            pygame.draw.rect(TELA, VERMELHO, (x_popup + 250, y_popup + altura - 100, 100, 50))
-            pygame.draw.rect(TELA, BRANCO, (x_popup + 250, y_popup + altura - 100, 100, 50), 3)
-            texto = fonte.render(str(pergunta["resposta_certa"]), True, BRANCO)
-            texto_rect = texto.get_rect(center=(x_popup + 300, y_popup + altura - 75))
-            TELA.blit(texto, texto_rect)
+                pygame.draw.rect(TELA, ESCOLHA, (x_popup + 250, y_popup + altura - 100, 100, 50))
+                pygame.draw.rect(TELA, BRANCO, (x_popup + 250, y_popup + altura - 100, 100, 50), 3)
+                texto = fonte.render(str(pergunta["resposta_certa"]), True, BRANCO)
+                texto_rect = texto.get_rect(center=(x_popup + 300, y_popup + altura - 75))
+                TELA.blit(texto, texto_rect)
+            else:
+                pygame.draw.rect(TELA, ESCOLHA, (x_popup + 50, y_popup + altura - 100, 100, 50))
+                pygame.draw.rect(TELA, BRANCO, (x_popup + 50, y_popup + altura - 100, 100, 50), 3)
+                texto = fonte.render(str(pergunta["resposta_certa"]), True, BRANCO)
+                texto_rect = texto.get_rect(center=(x_popup + 100, y_popup + altura - 75))
+                TELA.blit(texto, texto_rect)
 
+                pygame.draw.rect(TELA, ESCOLHA, (x_popup + 250, y_popup + altura - 100, 100, 50))
+                pygame.draw.rect(TELA, BRANCO, (x_popup + 250, y_popup + altura - 100, 100, 50), 3)
+                texto = fonte.render(str(pergunta["resposta_errada"]), True, BRANCO)
+                texto_rect = texto.get_rect(center=(x_popup + 300, y_popup + altura - 75))
+                TELA.blit(texto, texto_rect)
 
-            
             self.atualizacao_por_segundo()
             self.desenhar_informacoes()
 
             pygame.display.flip()
-
+    """
     def popup_pergunta(self, pergunta):
         largura,altura = 400,300
         x_popup = (LARGURA_JANELA - largura) // 2
@@ -223,7 +274,7 @@ class Level:
             self.desenhar_informacoes()
 
             pygame.display.flip()
-
+    """
     def atualizar_camera(self):
         jogador_x, jogador_y = self.jogador.posicao_atual
 
@@ -268,7 +319,7 @@ class Level:
                     pygame.quit()
                     quit()
             TELA.fill(PRETO)
-            pygame.draw.rect(TELA, ROXO, (x_popup, y_popup, largura, altura))
+            pygame.draw.rect(TELA, LARANJA, (x_popup, y_popup, largura, altura))
             pygame.draw.rect(TELA, BRANCO, (x_popup, y_popup, largura, altura), 5)
             fonte = pygame.font.SysFont(None, 36)
             if vitoria:
@@ -279,13 +330,17 @@ class Level:
             TELA.blit(texto, texto_rect)
 
             pygame.display.flip()
-
+        numero = int(self.nome[6])
         pontuacao = self.jogador.nota*30 + self.jogador.tempo_restante*10
 
         anterior_nivel = read_user(self.jogador.nome)["ultimo_nivel"]
         anterior_pontuacao = read_user(self.jogador.nome)["pontuacao"]
         from carregar_jogo import carregar_jogo
-        save_user(self.jogador.nome,None,None,None,None,None,None,None,None,None,None,anterior_nivel+1,anterior_pontuacao+pontuacao)
+        if numero > anterior_pontuacao:
+            save_user(self.jogador.nome,None,None,None,None,None,None,None,None,None,None,anterior_nivel+1,anterior_pontuacao+pontuacao)
+        else:
+            save_user(self.jogador.nome,None,None,None,None,None,None,None,None,None,None,anterior_nivel,anterior_pontuacao+pontuacao)
+
         carregar_jogo(self.jogador.nome)
 
 
