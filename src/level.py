@@ -318,14 +318,11 @@ class Level:
 
         start_time = pygame.time.get_ticks()
 
-        pontuacao = self.jogador.nota * 30 + self.jogador.tempo_restante * 10
+       
 
         user = read_user(self.jogador.nome)
 
-        if int(self.nome[6]) >= user["ultimo_nivel"]:
-            p_t = user["pontuacao"] + pontuacao
-        else:
-            p_t = user["pontuacao"]
+
 
         while pygame.time.get_ticks() - start_time < 4000:
             for evento in pygame.event.get():
@@ -337,11 +334,26 @@ class Level:
             pygame.draw.rect(TELA, BRANCO, (x_popup, y_popup, largura, altura), 5)
             fonte = pygame.font.SysFont(None, 36)
             if vitoria:
+                pontuacao = self.jogador.nota * 30 + self.jogador.tempo_restante * 10
+
+                if int(self.nome[6]) >= user["ultimo_nivel"]:
+                    p_t = user["pontuacao"] + pontuacao
+                else:
+                    p_t = user["pontuacao"]
+
                 texto = fonte.render("Você passou de ano!", True, BRANCO)
-                pontos = fonte.render(f"Pontos na fase: {pontuacao}", True, BRANCO)
-                pontos_totais = fonte.render(f"Pontos totais: {p_t}", True, BRANCO)
+
             else:
+                pontuacao = ((10 - int(self.nome[6])) * 30)
+                if int(self.nome[6]) >= user["ultimo_nivel"]:
+                    p_t = user["pontuacao"] - pontuacao
+                else:
+                    p_t = user["pontuacao"]
+
                 texto = fonte.render("Você reprovou", True, BRANCO)
+
+            pontos = fonte.render(f"Pontos na fase: {pontuacao}", True, BRANCO)
+            pontos_totais = fonte.render(f"Pontos totais: {p_t}", True, BRANCO)   
 
             texto_rect = texto.get_rect(center=(x_popup + largura // 2, y_popup + 50))
 
@@ -357,19 +369,20 @@ class Level:
 
     def venceu(self):
         pontuacao = self.jogador.nota * 30 + self.jogador.tempo_restante * 10
+        print(pontuacao)
 
         user = read_user(self.jogador.nome)
-        if user["ultimo_nivel"] != 10:
+        if user["ultimo_nivel"] != 10 and (user["ultimo_nivel"] <= int(self.nome[6])):
             user["ultimo_nivel"] += 1 
         
         if int(self.nome[6]) == 0:
             user["pontuacao"] += pontuacao
         else:
-            if int(self.nome[6]) > user["ultimo_nivel"]:
+            if int(self.nome[6]) > user["ultimo_nivel"] or int(user["ultimo_nivel"]) <= 2:
                 user["pontuacao"] += pontuacao
     
             
-            
+        print("prr",user)
 
         save_user(user["nome"],None,None,None,None,None,None,None,None,None,None,user["ultimo_nivel"],user["pontuacao"])
 

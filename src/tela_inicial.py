@@ -2,7 +2,7 @@ import pygame
 import cv2
 import os
 from novo_jogo import novo_jogo
-from carregar_jogo import carregar_jogo
+
 # Inicialização do Pygame
 
 pygame.init()
@@ -41,8 +41,9 @@ cor_titulo = (245, 189, 73)
 # Textos
 titulo = fonte_titulo.render('O Labirinto', True, cor_titulo)
 opcao_novo_jogo = fonte_opcoes.render('Jogar', True, cor_texto_normal)
-opcao_carregar_jogo = fonte_opcoes.render('Carregar Jogo', True, cor_texto_normal)
+opcao_podio = fonte_opcoes.render('Pódio', True, cor_texto_normal)
 opcao_informacoes = fonte_opcoes.render('Informações', True, cor_texto_normal)
+
 
 # Posições dos textos
 largura_titulo, altura_titulo = fonte_titulo.size('O Labirinto')
@@ -50,7 +51,7 @@ largura_opcoes, altura_opcoes = fonte_opcoes.size('Novo Jogo')
 
 posicao_titulo = ((LARGURA_JANELA - largura_titulo) // 2, ALTURA_JANELA // 4 - altura_titulo // 2)
 posicao_opcao_novo_jogo = ((LARGURA_JANELA - largura_opcoes) // 2, ALTURA_JANELA * 3 // 4 - altura_opcoes // 2)
-#posicao_opcao_carregar_jogo = ((LARGURA_JANELA - largura_opcoes) // 2, ALTURA_JANELA * 3 // 4 + 50 - altura_opcoes // 2)
+posicao_opcao_podio = ((LARGURA_JANELA - largura_opcoes) // 2, ALTURA_JANELA * 3 // 4 + 100 - altura_opcoes // 2)
 posicao_opcao_informacoes = ((LARGURA_JANELA - largura_opcoes) // 2, ALTURA_JANELA * 3 // 4 + 50 - altura_opcoes // 2)
 
 """
@@ -93,8 +94,9 @@ else:
 def abrir_novo_jogo():
     novo_jogo()
 
-def carregar_jogo1():
-    carregar_jogo()
+def podio():
+    from podio import classificacao
+    classificacao()
 
 def tela_infos():
     texto = 'O Labirinto é um jogo educativo desenvolvido por alunos\ndo curso de Ciência de Computação da Universidade Estadual de Campinas,\npara o projeto 3 da disciplina de algoritimos e programação de computadores. \nSim, acabamos de entrar na faculdade e ja estamos fazendo um JOGO!!\nRegras: \n-Obter pontos através de perguntas de professores, e livros\n-Utilizar desses pontos pra passar de ano(Férias)\n-Usar as bombas para explodir paredes\n-Fazer tudo isso sem o tempo estourar!\n \nTodas as artes do jogo, ou pelo menos a maioria foi feita por nós,\n incluindo também a musica.\n Gostariamos de agradecer ao professor e aos peds pelo ótimo semestre. \n(E ao chat GPT por ensinar pygames do zero pra gente).\n Enjoy the GAME! \n Assinado: Rafael Feltrin () e Lucas Guimarães 195948'
@@ -176,17 +178,16 @@ def main():
         else:
             opcao_novo_jogo = fonte_opcoes.render('Jogar', True, cor_texto_normal)
         
-        # Verificar hover sobre "Carregar Jogo"
-        """
-        if posicao_opcao_carregar_jogo[0] <= mouse_x <= posicao_opcao_carregar_jogo[0] + largura_opcoes and \
-        posicao_opcao_carregar_jogo[1] <= mouse_y <= posicao_opcao_carregar_jogo[1] + altura_opcoes:
-            opcao_carregar_jogo = fonte_opcoes.render('Carregar Jogo', True, cor_texto_hover)
+        # Verificar hover sobre "podio"
+        if posicao_opcao_podio[0] <= mouse_x <= posicao_opcao_podio[0] + largura_opcoes and \
+        posicao_opcao_podio[1] <= mouse_y <= posicao_opcao_podio[1] + altura_opcoes:
+            opcao_podio = fonte_opcoes.render('Pódio', True, cor_texto_hover)
             if pygame.mouse.get_pressed()[0]:  # Verifica se clicou com o botão esquerdo do mouse
-                carregar_jogo1()
+                podio()
                 rodando = False  # Fecha o menu principal ao abrir o novo jogo
         else:
-            opcao_carregar_jogo = fonte_opcoes.render('Carregar Jogo', True, cor_texto_normal)
-        """
+            opcao_podio = fonte_opcoes.render('Pódio', True, cor_texto_normal)
+
         # Verificar hover sobre "Informações"
         if posicao_opcao_informacoes[0] <= mouse_x <= posicao_opcao_informacoes[0] + largura_opcoes and \
         posicao_opcao_informacoes[1] <= mouse_y <= posicao_opcao_informacoes[1] + altura_opcoes:
@@ -198,7 +199,7 @@ def main():
 
         # Desenhar as opções do menu atualizadas
         TELA.blit(opcao_novo_jogo, posicao_opcao_novo_jogo)
-        #TELA.blit(opcao_carregar_jogo, posicao_opcao_carregar_jogo)
+        TELA.blit(opcao_podio, posicao_opcao_podio)
         TELA.blit(opcao_informacoes, posicao_opcao_informacoes)
 
         # Atualizar a tela

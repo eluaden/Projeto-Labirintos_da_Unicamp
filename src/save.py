@@ -7,7 +7,6 @@ def read_level_base(level_name) -> dict:
     #le os arquivos base de niveis
     file_path = os.path.join("database/level_base/",level_name + ".pkl")
     with open(file_path,"rb") as level:
-        print(type(level))
         return pickle.load(level)
 
 #para salvar um novo usuario no database, com progresso passado por parametros
@@ -32,16 +31,24 @@ def save_user(usuario,nivel_1,nivel_2,nivel_3,nivel_4,nivel_5,nivel_6,nivel_7,ni
         "ultimo_nivel": ultimo_nivel,
         "pontuacao": pontuacao
     }
+    print("pru",user)
 
-    with open(file_path_all_users,"rb+") as all_users_file:
-        if os.path.getsize(file_path_all_users) > 0:
+
+    if os.path.exists(file_path_all_users):
+        with open(file_path_all_users,"rb+") as all_users_file:
             all_users = pickle.load(all_users_file)
-        else:
+            all_users_file.seek(0)
+            print("all_users", all_users)
+            all_users[usuario] = user["pontuacao"]
+            print("all_users", all_users)
+            pickle.dump(all_users, all_users_file)
+    else:
+        with open(file_path_all_users,"wb") as all_users_file:
             all_users = {}
-        
-        all_users[usuario] = user
-        
-        pickle.dump(all_users,all_users_file)
+            all_users[usuario] = user["pontuacao"]
+            print("all_users", all_users)
+            pickle.dump(all_users, all_users_file)
+
         
     with open(file_path_user,"wb") as user_file:
         
@@ -63,12 +70,15 @@ def read_pergunta(nivel):
     with open(path, "rb") as f:
         return pickle.load(f)
 
+
 def read_all_users():
     file_path_all_users = os.path.join("database/users/all_users.pkl")
-    with open(file_path_all_users,"wb") as all_users_file:
-        
-        return pickle.load(all_users_file)
-    
+    if not os.path.exists(file_path_all_users):
+        return {}
+    with open(file_path_all_users, "rb") as all_users_file:
+        all_users = pickle.load(all_users_file)
+        print("reading", all_users)
+        return all_users  
 
 
 

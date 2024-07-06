@@ -11,7 +11,21 @@ def nivel_extra(nome_usuario,usuario):
 
     itens = {"bombs":(maze_x//5) -1,"clocks": (maze_y//4) + 1, "books": maze_x//5}
     inimigos = {"teachers": (maze_y//5)}
-    time = 60 + ((maze_x * maze_y) - 800)
+    time = 60
+    if maze_x>30:
+        time += 60
+    elif maze_x > 25:
+        time += 30
+    else:
+        time -= 15
+    if maze_y>30:
+        time += 60
+    elif maze_y > 25:
+        time += 30
+    else:
+        time -= 15
+    
+    
     media = time % 10
 
     
