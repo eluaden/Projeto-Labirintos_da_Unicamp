@@ -39,7 +39,8 @@ def save_user(usuario,nivel_1,nivel_2,nivel_3,nivel_4,nivel_5,nivel_6,nivel_7,ni
             all_users = pickle.load(all_users_file)
             all_users_file.seek(0)
             print("all_users", all_users)
-            all_users[usuario] = user["pontuacao"]
+            print("pont", pontuacao)
+            all_users[usuario] = pontuacao
             print("all_users", all_users)
             pickle.dump(all_users, all_users_file)
     else:

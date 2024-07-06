@@ -336,7 +336,7 @@ class Level:
             if vitoria:
                 pontuacao = self.jogador.nota * 30 + self.jogador.tempo_restante * 10
 
-                if int(self.nome[6]) >= user["ultimo_nivel"]:
+                if int(self.nome[6]) >= user["ultimo_nivel"] or int(self.nome[6]) == 0:
                     p_t = user["pontuacao"] + pontuacao
                 else:
                     p_t = user["pontuacao"]
@@ -344,7 +344,7 @@ class Level:
                 texto = fonte.render("Você passou de ano!", True, BRANCO)
 
             else:
-                pontuacao = ((10 - int(self.nome[6])) * 30)
+                pontuacao = -((10 - int(self.nome[6])) * 30)
                 if int(self.nome[6]) >= user["ultimo_nivel"]:
                     p_t = user["pontuacao"] - pontuacao
                 else:
@@ -372,17 +372,10 @@ class Level:
         print(pontuacao)
 
         user = read_user(self.jogador.nome)
-        if user["ultimo_nivel"] != 10 and (user["ultimo_nivel"] <= int(self.nome[6])):
-            user["ultimo_nivel"] += 1 
-        
-        if int(self.nome[6]) == 0:
+        if int(self.nome[6]) >= user["ultimo_nivel"] or int(self.nome[6]) == 0:
             user["pontuacao"] += pontuacao
-        else:
-            if int(self.nome[6]) > user["ultimo_nivel"] or int(user["ultimo_nivel"]) <= 2:
-                user["pontuacao"] += pontuacao
-    
-            
-        print("prr",user)
+            if int(self.nome[6]) != 10 and int(self.nome[6]) != 0:
+                user["ultimo_nivel"] = int(self.nome[6]) + 1
 
         save_user(user["nome"],None,None,None,None,None,None,None,None,None,None,user["ultimo_nivel"],user["pontuacao"])
 
@@ -391,11 +384,12 @@ class Level:
 
     def perdeu(self):
         estatua = Statue(self.jogador.nome,self.jogador.posicao_atual)
-        pontuacao = self.jogador.nota * 30 + self.jogador.tempo_restante * 10
+        pontuacao = ((10 - int(self.nome[6])) * 30)
         user = read_user(self.jogador.nome)
 
         user["pontuacao"] -= pontuacao
         user[self.nome] = estatua
+
         save_user(user["nome"],user["nivel_1"],user["nivel_2"],user["nivel_3"],user["nivel_4"],user["nivel_5"],\
                   user["nivel_6"],user["nivel_7"],user["nivel_8"],user["nivel_9"],user["nivel_10"],user["ultimo_nivel"],user["pontuacao"])
         
