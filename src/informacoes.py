@@ -24,7 +24,7 @@ cor_botao_hover = (7, 19, 24)
 
 # Texto das informações
 texto_informacoes = (
-    'O Labirinto é um jogo educativo desenvolvido por alunos'
+    'O Labirinto é um jogo educativo desenvolvido por alunos '
     'do curso de Ciência de Computação da Universidade Estadual de Campinas, para\n'
     'o projeto 3 da disciplina de algoritimos e programação de computadores.'
     'Sim, acabamos de entrar na faculdade e ja estamos fazendo um JOGO!!\n\n'
@@ -35,7 +35,7 @@ texto_informacoes = (
     '- Fazer tudo isso sem o tempo estourar!\n\n'
     'Todas as artes do jogo, ou pelo menos a maioria foi feita por nós,'
     'incluindo também a musica.\n'
-    'Gostariamos de agradecer ao professor e aos peds pelo ótimo semestre.'
+    'Gostariamos de agradecer ao professor e aos peds pelo ótimo semestre.\n'
     'Enjoy the GAME!\n'
     'Assinado: Rafael Feltrin 276246 e Lucas Guimarães 195948'
 )
@@ -91,7 +91,7 @@ def informacoes():
             botao_voltar = desenhar_botao(tela, 'X', (100, ALTURA_JANELA // 8 - altura_titulo // 2), hover=True)
             if pygame.mouse.get_pressed()[0]:
                 rodando = False
-                from tela_inicial import main
+                from main import main
                 main()
                 
 

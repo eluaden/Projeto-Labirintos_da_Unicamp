@@ -1,7 +1,7 @@
 import pygame
 import sys
 from save import read_all_users
-from tela_inicial import main  # Importar o main da tela inicial no início do arquivo
+from main import main  # Importar o main da tela inicial no início do arquivo
 
 # Inicializa o Pygame
 pygame.init()

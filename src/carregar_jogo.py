@@ -155,7 +155,7 @@ def carregar_jogo(nome_usuario):
             
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if retornar_button_rect.collidepoint(evento.pos):
-                    from tela_inicial import main
+                    from main import main
                     main()
                     print(f"Nome do jogador")
                 if nivel_extra_button_rect.collidepoint(evento.pos):
