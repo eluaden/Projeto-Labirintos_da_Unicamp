@@ -31,6 +31,7 @@ INFO_HEIGHT = 50  # Altura da área de informações
 
 class Level:
     def __init__(self, nome, nome_usr, labirinto, itens, inimigos, tempo, media, estatua=None):
+        """Inicializa os atributos do nível"""
         self.nome = nome
         self.labirinto = labirinto
         self.posicoes_ocupadas = []
@@ -52,6 +53,7 @@ class Level:
         self.camera_y = 0
 
     def gerar_itens_aleatorios(self, n_bomb, n_rel, n_liv):
+        """Gera itens aleatórios no labirinto"""
         itens = {"relogios": [], "bombas": [], "livros": []}
         for _ in range(n_rel):
             posicao_relogio = self.posicao_aleatoria()
@@ -68,6 +70,7 @@ class Level:
         return itens
 
     def gerar_inimigos(self, n_prof):
+        """Gera inimigos aleatórios no labirinto"""
         professores = []
         for _ in range(n_prof):
             posicao_prof = self.posicao_aleatoria()
@@ -76,6 +79,7 @@ class Level:
         return professores
 
     def posicao_aleatoria(self):
+        """Gera uma posição aleatória no labirinto que não esteja ocupada"""
         while True:
             x = random.randint(1, len(self.labirinto[0]) - 2)
             y = random.randint(1, len(self.labirinto) - 2)
@@ -84,6 +88,7 @@ class Level:
                 return (x, y)
 
     def desenhar_labirinto(self):
+        """Desenha o labirinto na tela"""
         imagem_parede = pygame.image.load('assets/parede.png')
         imagem_chao = pygame.image.load('assets/chao.png')
         imagem_saida = pygame.image.load('assets/saida.png')
@@ -108,12 +113,14 @@ class Level:
 
 
     def desenhar_jogador(self):
+        """Desenha o jogador na tela"""
         jogador_img = pygame.image.load('assets/jogador.png')
 
         x, y = self.jogador.posicao_atual
         TELA.blit(jogador_img, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
 
     def desenhar_inimigos(self):
+        """Desenha os inimigos na tela"""
         professor_img = pygame.image.load('assets/professor.png')
         estatua_img = pygame.image.load('assets/estatua.png')
 
@@ -125,7 +132,7 @@ class Level:
             TELA.blit(estatua_img, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
 
     def desenhar_itens(self):
-        # Carregar as imagens dos itens
+        """Desenha os itens na tela"""
         imagem_livro = pygame.image.load('assets/livro.png')
         imagem_relogio = pygame.image.load('assets/relogio.png')
         imagem_bomba = pygame.image.load('assets/bomba.png')
@@ -147,6 +154,7 @@ class Level:
                     TELA.blit(imagem_livro, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
 
     def desenhar_informacoes(self):
+        """Desenha as informações na tela"""
         fonte = pygame.font.Font('assets/ARCADE_N.TTF', 15)
         texto_nome = fonte.render(f'Nome: {self.jogador.nome}', True, LARANJA)
         texto_nota = fonte.render(f'Nota: {self.jogador.nota}', True, LARANJA)
@@ -163,6 +171,7 @@ class Level:
         
 
     def popup_pergunta(self, pergunta):
+        """Cria o pop-up de pergunta, quando o jogador fica próximo de um professor"""
         largura, altura = 400, 300
         x_popup = (LARGURA_JANELA - largura) // 2
         y_popup = (ALTURA_JANELA - altura) // 2
@@ -230,56 +239,9 @@ class Level:
             self.desenhar_informacoes()
 
             pygame.display.flip()
-    """
-    def popup_pergunta(self, pergunta):
-        largura,altura = 400,300
-        x_popup = (LARGURA_JANELA - largura) // 2
-        y_popup = (ALTURA_JANELA - altura) // 2
-        while True:
-            for evento in pygame.event.get():
-                if evento.type == pygame.QUIT:
-                    pygame.quit()
-                    quit()
-                elif evento.type == pygame.MOUSEBUTTONDOWN:
-                    x, y = pygame.mouse.get_pos()
-                    # Verifica se o clique foi dentro do retângulo "Sim"
-                    if x_popup + 50 <= x <= x_popup + 150 and y_popup + altura - 100 <= y <= y_popup + altura - 50:
-                        
-                        return False
-                    # Verifica se o clique foi dentro do retângulo "Não"
-                    elif x_popup + 250 <= x <= x_popup + 350 and y_popup + altura - 100 <= y <= y_popup + altura - 50:
-                        
-                        return True
 
-            TELA.fill(PRETO)
-            pygame.draw.rect(TELA, LARANJA, (x_popup, y_popup, largura, altura))
-            pygame.draw.rect(TELA, BRANCO, (x_popup, y_popup, largura, altura), 5)
-            fonte = pygame.font.SysFont(None, 36)
-            texto = fonte.render(pergunta["pergunta"], True, BRANCO)
-            texto_rect = texto.get_rect(center=(x_popup + largura // 2, y_popup + 50))
-            TELA.blit(texto, texto_rect)
-
-            pygame.draw.rect(TELA, VERDE, (x_popup + 50, y_popup + altura - 100, 100, 50))
-            pygame.draw.rect(TELA, BRANCO, (x_popup + 50, y_popup + altura - 100, 100, 50), 3)
-            fonte = pygame.font.SysFont(None, 36)
-            texto = fonte.render(str(pergunta["resposta_errada"]), True, BRANCO)
-            texto_rect = texto.get_rect(center=(x_popup + 100, y_popup + altura - 75))
-            TELA.blit(texto, texto_rect)
-
-            pygame.draw.rect(TELA, VERMELHO, (x_popup + 250, y_popup + altura - 100, 100, 50))
-            pygame.draw.rect(TELA, BRANCO, (x_popup + 250, y_popup + altura - 100, 100, 50), 3)
-            texto = fonte.render(str(pergunta["resposta_certa"]), True, BRANCO)
-            texto_rect = texto.get_rect(center=(x_popup + 300, y_popup + altura - 75))
-            TELA.blit(texto, texto_rect)
-
-
-            
-            self.atualizacao_por_segundo()
-            self.desenhar_informacoes()
-
-            pygame.display.flip()
-    """
     def atualizar_camera(self):
+        """Ajusta a posição da câmera com base na posição do jogador"""
         jogador_x, jogador_y = self.jogador.posicao_atual
 
         # Calcula a posição desejada da câmera
@@ -295,6 +257,7 @@ class Level:
         self.camera_y = max(0, min(self.camera_y, self.altura_labirinto - ALTURA_JANELA + INFO_HEIGHT))
 
     def atualizacao_por_segundo(self):
+        """Função para a atualização do tempo restante do usuário"""
         agora = pygame.time.get_ticks()
         if agora - self.ultimo_tempo >= 1000:
             self.jogador.tempo_restante -= 1
@@ -312,18 +275,14 @@ class Level:
 
 
     def popup_final(self, vitoria):
+        """Função para o popup final do jogo, com a mensagem de vitória ou derrota (se passou ou reprovou)"""
         largura,altura = 400,300
         x_popup = (LARGURA_JANELA - largura) // 2
         y_popup = (ALTURA_JANELA - altura) // 2
 
         start_time = pygame.time.get_ticks()
-
-       
-
         user = read_user(self.jogador.nome)
-
-
-
+        
         while pygame.time.get_ticks() - start_time < 4000:
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
@@ -368,6 +327,10 @@ class Level:
 
 
     def venceu(self):
+        """
+        Quando o jogador atinge a nota suficinte, aciona essa que é a função final.
+        Ela realiza todas as atribuições necessárias de atualização do banco de dados
+        """
         pontuacao = self.jogador.nota * 30 + self.jogador.tempo_restante * 10
         print(pontuacao)
 
@@ -383,6 +346,10 @@ class Level:
         carregar_jogo(self.jogador.nome)
 
     def perdeu(self):
+        """
+        Função chamada quando o jogador perde
+        Realiza do decrescimo de pontos, e manda carrega o menu de fases
+        """
         estatua = Statue(self.jogador.nome,self.jogador.posicao_atual)
         pontuacao = ((10 - int(self.nome[6])) * 30)
         user = read_user(self.jogador.nome)
@@ -398,6 +365,7 @@ class Level:
 
 
     def popup_insuficiente(self):
+        """Pop-up que informa, no momento que o jogador está na saída, que sua nota inda está insuficiente"""
         largura,altura = 400,300
         x_popup = (LARGURA_JANELA - largura) // 2
         y_popup = (ALTURA_JANELA - altura) // 2
@@ -419,6 +387,7 @@ class Level:
         pygame.display.flip()
 
     def verificar_colisoes(self):
+        """Função que verifica colisão com bombas, relógios e livros"""
         for bomba in self.itens["bombas"]:
             if tuple(self.jogador.posicao_atual) == bomba.position and not bomba.on_inv:
                 self.jogador.inventario["bombas"].append(bomba)
@@ -466,6 +435,7 @@ class Level:
 
 
     def jogar(self):
+        """Função principal do jogo"""
         rodando = True
         while rodando:
             for evento in pygame.event.get():

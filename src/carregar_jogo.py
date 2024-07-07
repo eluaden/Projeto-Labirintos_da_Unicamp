@@ -12,13 +12,8 @@ pygame.display.set_caption('Tela de Seleção de Fases')
 
 # Cores
 COR_FUNDO = (2, 0, 12)  # Preto
-"""
-COR_QUADRADO = (217, 220, 214)  # Cinza para quadrados
-COR_QUADRADO_HOVER = (245, 189, 73)  # Cinza claro para hover
-"""
 COR_QUADRADO = (255, 254, 227) # Cinza para quadrados
 COR_QUADRADO_HOVER = (245, 189, 73)  # Cinza claro para hover
-
 COR_TITULO = (245, 189, 73)  # Branco para o título
 
 # Dimensões e posição dos quadrados
@@ -34,13 +29,12 @@ cadeado_img = pygame.image.load(os.path.join('assets/', 'cadeado.png')).convert_
 # Redimensionar a imagem usando interpolação suave
 cadeado_img = pygame.transform.smoothscale(cadeado_img, (TAMANHO_QUADRADO - 40, TAMANHO_QUADRADO - 40))
 
+#Fonte do botão e título
 FONT_BOTTON = pygame.freetype.SysFont("Arial", 20, True)
+FONT_TITULO = pygame.font.Font('assets/ARCADE_N.TTF', 35)
 
-caminho_fonte = 'assets/ARCADE_N.TTF'
-
-FONT_TITULO = pygame.font.Font(caminho_fonte, 35)
-# Função para desenhar os quadrados na tela
 def desenhar_tela(nome_usuario):
+    """Função para desenhar os quadrados das fases na tela"""
     TELA.fill(COR_FUNDO)
     
     # Desenhar título
@@ -66,10 +60,8 @@ def desenhar_tela(nome_usuario):
             else:
                 TELA.blit(cadeado_img, (x + 20, y + 20))  # Desenhar cadeado sobre quadrados não liberados
 
-# Loop principal
-
-# Função para desenhar o botão
 def desenhar_botao(screen, text, rect, color):
+    """Função para desenhar o botão com o texto e a cor desejada"""
     pygame.draw.rect(screen, color, rect)
     txt_surface, _ = FONT_BOTTON.render(text, (0,0,0))
     screen.blit(txt_surface, (rect.x + (rect.width - txt_surface.get_width()) // 2, rect.y + (rect.height - txt_surface.get_height()) // 2))
@@ -79,6 +71,7 @@ nivel_extra_button_rect = pygame.Rect(1030, 600, 120, 40)
 
 
 def carregar_jogo(nome_usuario):
+    """Função princial da tela de opções das fases"""
     rodando = True
 
     usuario = read_user(nome_usuario)
@@ -98,10 +91,13 @@ def carregar_jogo(nome_usuario):
                         x_quad = margem_esquerda + coluna * (TAMANHO_QUADRADO + ESPACO_ENTRE_QUADRADOS)
                         y_quad = margem_topo + linha * (TAMANHO_QUADRADO + ESPACO_ENTRE_QUADRADOS)
                         rect = pygame.Rect(x_quad, y_quad, TAMANHO_QUADRADO, TAMANHO_QUADRADO)
+
+                        #Botão acionado
                         if rect.collidepoint(x, y):
                             fase_selecionada = linha * NUMERO_COLUNAS + coluna + 1
                             print(f"Clicou na fase {fase_selecionada}")
-                            # Implemente aqui a ação desejada ao clicar (abrir fase, mostrar informações, etc.)
+                            #Verificação se a fases está disponível ou não para o jogador
+                            #Se estiver, chama a função jogar(), com a fase clicada como parâmetro 
                             if fase >= 1 and fase_selecionada == 1:
                                 print('entrouuu')
                                 level_1 = read_level_base("level_1")
@@ -153,11 +149,11 @@ def carregar_jogo(nome_usuario):
                                 jogo = Level("nivel_10",nome_usuario,level_10["maze"],level_10["items"],level_10["enemies"],level_10["time"],level_10["media"],usuario["nivel_10"])
                                 jogo.jogar()
             
+            #Botões inferiores da tela
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if retornar_button_rect.collidepoint(evento.pos):
                     from main import main
                     main()
-                    print(f"Nome do jogador")
                 if nivel_extra_button_rect.collidepoint(evento.pos):
                     nivel_extra(nome_usuario,usuario)
 
@@ -178,15 +174,10 @@ def carregar_jogo(nome_usuario):
 
         desenhar_botao(TELA, "Nivel Extra", nivel_extra_button_rect, current_button_color)
 
-        
-        
-        
-        
         pygame.display.flip()
 
     # Finaliza o Pygame
     pygame.quit()
-
 
 if __name__ == "__main__":
     carregar_jogo()

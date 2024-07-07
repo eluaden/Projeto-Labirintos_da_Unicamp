@@ -28,8 +28,6 @@ def nivel_extra(nome_usuario,usuario):
     
     media = time % 10
 
-    
-
     nivel = Level("nivel_0",nome_usuario,maze,itens,inimigos,time,media)
     nivel.jogar()
 

@@ -1,12 +1,14 @@
 import pygame
 import sys
 from save import read_all_users
-from main import main  # Importar o main da tela inicial no início do arquivo
+from main import main  # Importar a função principal da tela inicial
 
 # Inicializa o Pygame
 pygame.init()
 
+# Dimensões da janela
 LARGURA_JANELA, ALTURA_JANELA = 1200, 700
+
 # Configurações de tela
 screen_width = 1200
 screen_height = 700
@@ -37,11 +39,35 @@ cor_texto_normal = (217, 220, 214)  # Branco
 
 # Função para desenhar o texto centralizado
 def draw_text(text, font, color, surface, x, y):
+    """
+    Desenha o texto centralizado na superfície especificada.
+
+    Args:
+        text (str): Texto a ser desenhado.
+        font (pygame.font.Font): Fonte do texto.
+        color (tuple): Cor do texto.
+        surface (pygame.Surface): Superfície onde o texto será desenhado.
+        x (int): Coordenada x do centro do texto.
+        y (int): Coordenada y do centro do texto.
+    """
     textobj = font.render(text, True, color)
     textrect = textobj.get_rect(center=(x, y))
     surface.blit(textobj, textrect)
 
+# Função para desenhar o botão
 def desenhar_botao(tela, texto, posicao, hover=False):
+    """
+    Desenha um botão na tela com efeito de hover.
+
+    Args:
+        tela (pygame.Surface): Superfície onde o botão será desenhado.
+        texto (str): Texto do botão.
+        posicao (tuple): Coordenadas x, y do centro do botão.
+        hover (bool): Indica se o efeito de hover está ativo.
+    
+    Returns:
+        pygame.Rect: Retângulo do botão.
+    """
     largura_botao = 50
     altura_botao = 50
     cor_botao = cor_botao_hover if hover else cor_botao_normal
@@ -53,9 +79,13 @@ def desenhar_botao(tela, texto, posicao, hover=False):
     tela.blit(texto_renderizado, texto_rect)
     return botao_rect
 
+# Função principal da tela de classificação
 def classificacao():
+    """
+    Exibe a tela de classificação dos jogadores.
+    """
     players_scores = read_all_users()
-    print("podio",players_scores)
+    print("podio", players_scores)
 
     running = True
     while running:
@@ -73,7 +103,7 @@ def classificacao():
         # Ordenar jogadores por pontuação (decrescente)
         sorted_players = sorted(players_scores.items(), key=lambda item: item[1], reverse=True)
 
-        #hover no botao
+        # Hover no botão
         mouse_x, mouse_y = pygame.mouse.get_pos()
         botao_voltar = desenhar_botao(screen, 'X', (100, ALTURA_JANELA // 8 // 2), hover=False)
         if botao_voltar.collidepoint(mouse_x, mouse_y):
@@ -81,8 +111,6 @@ def classificacao():
             if pygame.mouse.get_pressed()[0]:
                 running = False
                 main()
-
-       # pygame.draw.rect(screen, white, botao_retornar_rect)
 
         # Desenhar a tabela de classificação
         y_offset = 150
@@ -99,6 +127,3 @@ def classificacao():
 
         # Atualizar a tela
         pygame.display.flip()
-
-
-

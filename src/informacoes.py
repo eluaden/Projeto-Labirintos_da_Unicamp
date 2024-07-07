@@ -24,11 +24,12 @@ cor_botao_hover = (7, 19, 24)
 
 # Texto das informações
 texto_informacoes = (
-    'O Labirinto é um jogo educativo desenvolvido por alunos '
-    'do curso de Ciência de Computação da Universidade Estadual de Campinas, para\n'
-    'o projeto 3 da disciplina de algoritimos e programação de computadores.'
-    'Sim, acabamos de entrar na faculdade e ja estamos fazendo um JOGO!!\n\n'
-    'Regras:\n'
+    """
+    "Os Labirintos da Unicamp" é um jogo desenvolvido em Python, inspirado no jogo "Laberinto del Saber". O objetivo do jogador é completar 
+    diferentes labirintos, coletar pontos e interagir com professores dentro de um tempo limite. O jogador deve acumular NOTA suficiente para 
+    avançar para o próximo labirinto, enquanto deve responder as perguntas dos professores que se movimentam pelo labirinto. O jogo possui 
+    vários níveis e funcionalidades, incluindo salvamento e carregamento, tabela de pontuação, Nível extra(que é ilimitado) e muito mais."""
+    '\nRegras:\n'
     '- Obter pontos através de perguntas de professores, e livros\n'
     '- Utilizar desses pontos pra passar de ano(Férias)\n'
     '- Usar as bombas para explodir paredes\n'
@@ -42,6 +43,7 @@ texto_informacoes = (
 
 # Função para desenhar botões
 def desenhar_botao(tela, texto, posicao, hover=False):
+    """Função principal que desenha o botão na tela"""
     largura_botao = 50
     altura_botao = 50
     if hover:
@@ -58,6 +60,7 @@ def desenhar_botao(tela, texto, posicao, hover=False):
     return botao_rect
 
 def informacoes():
+    """Função princial da tela de informações"""
     tela = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA))
     pygame.display.set_caption('Informações')
     
