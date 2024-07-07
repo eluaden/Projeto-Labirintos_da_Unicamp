@@ -2,9 +2,8 @@ import pygame
 import cv2
 import os
 from novo_jogo import novo_jogo
-
+from informacoes import informacoes
 # Inicialização do Pygame
-
 pygame.init()
 
 # Defina as dimensões da janela
@@ -15,7 +14,6 @@ POS_X, POS_Y = 100, 50  # Exemplo de posição (100 pixels à direita, 50 pixels
 
 # Crie a tela do Pygame com posição inicial definida
 TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA), 0, 32)
-
 pygame.display.set_caption('Tela Inicial')
 
 # Inicialize o mixer
@@ -29,68 +27,58 @@ pygame.mixer.music.set_volume(0.3)
 # Carregar o vídeo com OpenCV
 video = cv2.VideoCapture('assets/video_labirinto6.mp4')
 
-# Fontes e cores 141, 8, 1
-fonte_titulo = pygame.font.Font(None, 80)
-fonte_opcoes = pygame.font.Font(None, 40)
+# Caminho para o arquivo de fonte
+caminho_fonte = 'assets/ARCADE_N.TTF'
+
+# Fontes e cores
+fonte_titulo = pygame.font.Font(caminho_fonte, 70)
+fonte_opcoes = pygame.font.Font(caminho_fonte, 30)
 cor_texto_normal = (217, 220, 214)  # Branco
-cor_texto_hover = (245, 189, 73)   # vermelho para o hover
+cor_texto_hover = (245, 189, 73)   # Vermelho para o hover
 cor_fundo_texto = (0, 0, 0)         # Preto
 cor_titulo = (245, 189, 73)
 
+# Cores dos botões
+cor_botao_normal = (11, 32, 39)
+cor_botao_hover = (7, 19, 24)
+
+"""
+antes
+# Cores dos botões
+cor_botao_normal = (0, 41, 168)
+cor_botao_hover = (0, 30, 122)
+"""
 
 # Textos
 titulo = fonte_titulo.render('O Labirinto', True, cor_titulo)
-opcao_novo_jogo = fonte_opcoes.render('Jogar', True, cor_texto_normal)
-opcao_podio = fonte_opcoes.render('Pódio', True, cor_texto_normal)
-opcao_informacoes = fonte_opcoes.render('Informações', True, cor_texto_normal)
 
-
-# Posições dos textos
+# Posições dos textos e botões
 largura_titulo, altura_titulo = fonte_titulo.size('O Labirinto')
-largura_opcoes, altura_opcoes = fonte_opcoes.size('Novo Jogo')
-
 posicao_titulo = ((LARGURA_JANELA - largura_titulo) // 2, ALTURA_JANELA // 4 - altura_titulo // 2)
-posicao_opcao_novo_jogo = ((LARGURA_JANELA - largura_opcoes) // 2, ALTURA_JANELA * 3 // 4 - altura_opcoes // 2)
-posicao_opcao_podio = ((LARGURA_JANELA - largura_opcoes) // 2, ALTURA_JANELA * 3 // 4 + 100 - altura_opcoes // 2)
-posicao_opcao_informacoes = ((LARGURA_JANELA - largura_opcoes) // 2, ALTURA_JANELA * 3 // 4 + 50 - altura_opcoes // 2)
 
-"""
-# Função para abrir um novo jogo
-if os.name == 'nt':
-    def abrir_novo_jogo():
-        subprocess.Popen(['python', 'src/novo_jogo.py'])
+# Dimensões dos botões
+largura_botao = 380
+altura_botao = 70
+margem_entre_botoes = 30
 
-    def carregar_jogo():
-        subprocess.Popen(['python', 'src/carregar_jogo.py'])
-else:
-    def abrir_novo_jogo():
-        subprocess.Popen(['python3', 'src/novo_jogo.py'])
+# Função para desenhar botões
+def desenhar_botao(texto, posicao, hover=False):
+    if hover:
+        cor_botao = cor_botao_hover
+        cor_texto = cor_texto_hover
+    else:
+        cor_botao = cor_botao_normal
+        cor_texto = cor_texto_normal
+    
+    botao_rect = pygame.Rect(0, 0, largura_botao, altura_botao)
+    botao_rect.center = posicao
+    pygame.draw.rect(TELA, cor_botao, botao_rect, border_radius=10)
+    texto_renderizado = fonte_opcoes.render(texto, True, cor_texto_normal)
+    texto_rect = texto_renderizado.get_rect(center=botao_rect.center)
+    TELA.blit(texto_renderizado, texto_rect)
+    return botao_rect
 
-    def carregar_jogo():
-        subprocess.Popen(['python3', 'src/carregar_jogo.py'])
-"""
-# Função para abrir um novo jogo
-
-"""
-if os.name == 'nt':
-    def abrir_novo_jogo():
-        pygame.quit()
-        os.system('python src/novo_jogo.py')
-
-    def carregar_jogo():
-        pygame.quit()
-        os.system('python src/carregar_jogo.py')
-else:
-    def abrir_novo_jogo():
-        pygame.quit()
-        os.system('python3 src/novo_jogo.py')
-
-    def carregar_jogo():
-        pygame.quit()
-        os.system('python3 src/carregar_jogo.py')
-"""
-
-
+# Funções de callback para os botões
 def abrir_novo_jogo():
     novo_jogo()
 
@@ -98,6 +86,10 @@ def podio():
     from podio import classificacao
     classificacao()
 
+def abrir_informacoes():
+    informacoes()
+
+"""
 def tela_infos():
     texto = 'O Labirinto é um jogo educativo desenvolvido por alunos\ndo curso de Ciência de Computação da Universidade Estadual de Campinas,\npara o projeto 3 da disciplina de algoritimos e programação de computadores. \nSim, acabamos de entrar na faculdade e ja estamos fazendo um JOGO!!\nRegras: \n-Obter pontos através de perguntas de professores, e livros\n-Utilizar desses pontos pra passar de ano(Férias)\n-Usar as bombas para explodir paredes\n-Fazer tudo isso sem o tempo estourar!\n \nTodas as artes do jogo, ou pelo menos a maioria foi feita por nós,\n incluindo também a musica.\n Gostariamos de agradecer ao professor e aos peds pelo ótimo semestre. \n(E ao chat GPT por ensinar pygames do zero pra gente).\n Enjoy the GAME! \n Assinado: Rafael Feltrin () e Lucas Guimarães 195948'
 
@@ -118,10 +110,9 @@ def tela_infos():
             else:
                 cor_rect = cor_texto_normal
                    
-
         TELA.fill(cor_fundo_texto)
-        
-        #quebrando texto
+  
+        # Quebrando texto
         lines = texto.split('\n')
         for i, line in enumerate(lines):
             line = fonte_opcoes.render(line, True, cor_texto_normal)
@@ -129,12 +120,11 @@ def tela_infos():
             TELA.blit(line, line_rect)
 
         botao_voltar = fonte_opcoes.render('Voltar', True, cor_fundo_texto)
-        pygame.draw.rect(TELA,cor_rect, botao_voltar_rect,)
+        pygame.draw.rect(TELA, cor_rect, botao_voltar_rect)
         TELA.blit(botao_voltar, botao_voltar_rect)
         pygame.display.flip()
-
-
-
+"""
+        
 # Loop principal
 def main():
     video = cv2.VideoCapture('assets/video_labirinto6.mp4')
@@ -165,42 +155,29 @@ def main():
         # Desenhar texto do título
         TELA.blit(titulo, posicao_titulo)
 
-        # Verificar hover e desenhar opções do menu com a cor adequada
+        # Verificar hover e desenhar botões do menu com a cor adequada
         mouse_x, mouse_y = pygame.mouse.get_pos()
         
-        # Verificar hover sobre "Novo Jogo"
-        if posicao_opcao_novo_jogo[0] <= mouse_x <= posicao_opcao_novo_jogo[0] + largura_opcoes and \
-        posicao_opcao_novo_jogo[1] <= mouse_y <= posicao_opcao_novo_jogo[1] + altura_opcoes:
-            opcao_novo_jogo = fonte_opcoes.render('Jogar', True, cor_texto_hover)
-            if pygame.mouse.get_pressed()[0]:  # Verifica se clicou com o botão esquerdo do mouse
-                abrir_novo_jogo()
-                rodando = False  # Fecha o menu principal ao abrir o novo jogo
-        else:
-            opcao_novo_jogo = fonte_opcoes.render('Jogar', True, cor_texto_normal)
+        posicao_opcao_novo_jogo = (LARGURA_JANELA // 2, ALTURA_JANELA * 3 // 4 - altura_botao - margem_entre_botoes)
+        posicao_opcao_podio = (LARGURA_JANELA // 2, ALTURA_JANELA * 3 // 4)
+        posicao_opcao_informacoes = (LARGURA_JANELA // 2, ALTURA_JANELA * 3 // 4 + altura_botao + margem_entre_botoes)
         
-        # Verificar hover sobre "podio"
-        if posicao_opcao_podio[0] <= mouse_x <= posicao_opcao_podio[0] + largura_opcoes and \
-        posicao_opcao_podio[1] <= mouse_y <= posicao_opcao_podio[1] + altura_opcoes:
-            opcao_podio = fonte_opcoes.render('Pódio', True, cor_texto_hover)
-            if pygame.mouse.get_pressed()[0]:  # Verifica se clicou com o botão esquerdo do mouse
-                podio()
-                rodando = False  # Fecha o menu principal ao abrir o novo jogo
-        else:
-            opcao_podio = fonte_opcoes.render('Pódio', True, cor_texto_normal)
+        botao_novo_jogo = desenhar_botao('Jogar', posicao_opcao_novo_jogo, hover=posicao_opcao_novo_jogo[0] - largura_botao // 2 <= mouse_x <= posicao_opcao_novo_jogo[0] + largura_botao // 2 and posicao_opcao_novo_jogo[1] - altura_botao // 2 <= mouse_y <= posicao_opcao_novo_jogo[1] + altura_botao // 2)
+        botao_podio = desenhar_botao('Podio', posicao_opcao_podio, hover=posicao_opcao_podio[0] - largura_botao // 2 <= mouse_x <= posicao_opcao_podio[0] + largura_botao // 2 and posicao_opcao_podio[1] - altura_botao // 2 <= mouse_y <= posicao_opcao_podio[1] + altura_botao // 2)
+        botao_informacoes = desenhar_botao('Informacoes', posicao_opcao_informacoes, hover=posicao_opcao_informacoes[0] - largura_botao // 2 <= mouse_x <= posicao_opcao_informacoes[0] + largura_botao // 2 and posicao_opcao_informacoes[1] - altura_botao // 2 <= mouse_y <= posicao_opcao_informacoes[1] + altura_botao // 2)
 
-        # Verificar hover sobre "Informações"
-        if posicao_opcao_informacoes[0] <= mouse_x <= posicao_opcao_informacoes[0] + largura_opcoes and \
-        posicao_opcao_informacoes[1] <= mouse_y <= posicao_opcao_informacoes[1] + altura_opcoes:
-            opcao_informacoes = fonte_opcoes.render('Informações', True, cor_texto_hover)
-            if pygame.mouse.get_pressed()[0]:
-                tela_infos()
-        else:
-            opcao_informacoes = fonte_opcoes.render('Informações', True, cor_texto_normal)
+        # Verificar cliques nos botões
+        if botao_novo_jogo.collidepoint(mouse_x, mouse_y) and pygame.mouse.get_pressed()[0]:
+            abrir_novo_jogo()
+            rodando = False  # Fecha o menu principal ao abrir o novo jogo
 
-        # Desenhar as opções do menu atualizadas
-        TELA.blit(opcao_novo_jogo, posicao_opcao_novo_jogo)
-        TELA.blit(opcao_podio, posicao_opcao_podio)
-        TELA.blit(opcao_informacoes, posicao_opcao_informacoes)
+        if botao_podio.collidepoint(mouse_x, mouse_y) and pygame.mouse.get_pressed()[0]:
+            podio()
+            rodando = False  # Fecha o menu principal ao abrir o novo jogo
+
+        if botao_informacoes.collidepoint(mouse_x, mouse_y) and pygame.mouse.get_pressed()[0]:
+            abrir_informacoes()
+            rodando = False
 
         # Atualizar a tela
         pygame.display.flip()

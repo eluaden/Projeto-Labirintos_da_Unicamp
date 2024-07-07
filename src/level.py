@@ -147,19 +147,19 @@ class Level:
                     TELA.blit(imagem_livro, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
 
     def desenhar_informacoes(self):
-        fonte = pygame.font.SysFont(None, 36)
-        texto_nome = fonte.render(f'Nome: {self.jogador.nome}', True, BRANCO)
-        texto_nota = fonte.render(f'Nota: {self.jogador.nota}', True, BRANCO)
-        texto_tempo = fonte.render(f'Tempo: {self.jogador.tempo_restante}', True, BRANCO)
-        texto_bombas = fonte.render(f'Bombas: {len(self.jogador.inventario["bombas"])}', True, BRANCO)
+        fonte = pygame.font.Font('assets/ARCADE_N.TTF', 15)
+        texto_nome = fonte.render(f'Nome: {self.jogador.nome}', True, LARANJA)
+        texto_nota = fonte.render(f'Nota: {self.jogador.nota}', True, LARANJA)
+        texto_tempo = fonte.render(f'Tempo: {self.jogador.tempo_restante}', True, LARANJA)
+        texto_bombas = fonte.render(f'Bombas: {len(self.jogador.inventario["bombas"])}', True, LARANJA)
 
         for x in range(0, 1201, 50):  # Começa do 0, vai até 1200 com passo de 50
-            pygame.draw.rect(TELA, PRETO, (x, 0, 50, 50))
+            pygame.draw.rect(TELA, (0, 11, 13), (x, 0, 50, 50))
 
-        TELA.blit(texto_nome, (20, 10))
-        TELA.blit(texto_nota, (300, 10))
-        TELA.blit(texto_tempo, (500, 10))
-        TELA.blit(texto_bombas, (700, 10))
+        TELA.blit(texto_nome, (20, 15))
+        TELA.blit(texto_nota, (300, 15))
+        TELA.blit(texto_tempo, (500, 15))
+        TELA.blit(texto_bombas, (700, 15))
         
 
     def popup_pergunta(self, pergunta):

@@ -3,7 +3,7 @@ import pygame.freetype
 import os
 from save import *
 from carregar_jogo import carregar_jogo
-
+caminho_fonte = 'assets/ARCADE_N.TTF'
 # Inicialize o Pygame
 pygame.init()
 
@@ -26,6 +26,8 @@ pygame.mixer.music.load('assets/musica_inicial.mp3')
 pygame.mixer.music.play(loops=-1)
 pygame.mixer.music.set_volume(0.3)
 
+FONT_TITULO = pygame.font.Font(caminho_fonte, 25)
+
 # Cores
 WHITE = (0,0,0)
 BLACK = (2, 0, 12)
@@ -35,7 +37,8 @@ ORANGE = (245, 189, 73)
 
 # Fonte
 pygame.font.init()
-FONT = pygame.freetype.SysFont("Arial", 35, True)
+
+FONT = FONT_TITULO.render('Nome do jogador', True, ORANGE)
 FONT_BOTTON = pygame.freetype.SysFont("Arial", 20, True)
 SMALL_FONT = pygame.freetype.SysFont("Arial", 20)
 
@@ -99,13 +102,7 @@ def novo_jogo():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_rect.collidepoint(event.pos):
                     print(f"Nome do jogador: {input_box.text}")
-                    # Lógica após clicar no botão
-                    """
-                    save_user(input_box.text,None,None,None,None,None,None,None,None,None,None,1, 0)
-                    level_1 = read_level_base("level_10")
-                    jogo = Level("level_10",level_1["maze"],level_1["items"],level_1["enemies"],level_1["time"],level_1["media"])
-                    jogo.jogar()
-                    """
+
                     if not read_user(input_box.text):
                         save_user(input_box.text,None,None,None,None,None,None,None,None,None,None,1,0)
 
@@ -119,7 +116,9 @@ def novo_jogo():
         input_box.update()
 
         TELA.fill(BLACK)
-        FONT.render_to(TELA, (460, 200), "Nome do jogador", ORANGE)
+        #FONT.render(TELA, (460, 200), "Nome do jogador", ORANGE)
+        TELA.blit(FONT, (430,200))
+
         input_box.draw(TELA)
         desenhar_botao(TELA, "Enviar", button_rect, current_button_color)
 

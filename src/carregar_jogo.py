@@ -12,8 +12,13 @@ pygame.display.set_caption('Tela de Seleção de Fases')
 
 # Cores
 COR_FUNDO = (2, 0, 12)  # Preto
+"""
 COR_QUADRADO = (217, 220, 214)  # Cinza para quadrados
 COR_QUADRADO_HOVER = (245, 189, 73)  # Cinza claro para hover
+"""
+COR_QUADRADO = (255, 254, 227) # Cinza para quadrados
+COR_QUADRADO_HOVER = (245, 189, 73)  # Cinza claro para hover
+
 COR_TITULO = (245, 189, 73)  # Branco para o título
 
 # Dimensões e posição dos quadrados
@@ -31,15 +36,18 @@ cadeado_img = pygame.transform.smoothscale(cadeado_img, (TAMANHO_QUADRADO - 40, 
 
 FONT_BOTTON = pygame.freetype.SysFont("Arial", 20, True)
 
+caminho_fonte = 'assets/ARCADE_N.TTF'
+
+FONT_TITULO = pygame.font.Font(caminho_fonte, 35)
 # Função para desenhar os quadrados na tela
 def desenhar_tela(nome_usuario):
     TELA.fill(COR_FUNDO)
     
     # Desenhar título
     fonte_titulo = pygame.font.SysFont(None, 60)
-    titulo = fonte_titulo.render('Escolha uma Fase', True, COR_TITULO)
+    titulo = FONT_TITULO.render('Escolha uma Fase', True, COR_TITULO)
     largura_titulo, altura_titulo = fonte_titulo.size('Escolha uma Fase')
-    posicao_titulo = ((LARGURA_JANELA - largura_titulo) // 2, margem_topo // 2 - altura_titulo // 2)
+    posicao_titulo = (((LARGURA_JANELA - largura_titulo) // 2) - 100 , margem_topo // 2 - altura_titulo // 2)
     TELA.blit(titulo, posicao_titulo)
     
     for linha in range(NUMERO_LINHAS):
@@ -164,9 +172,9 @@ def carregar_jogo(nome_usuario):
         desenhar_botao(TELA, "Retornar", retornar_button_rect, current_button_color)
         #efeito de hover no botão nivel extra
         if nivel_extra_button_rect.collidepoint(pygame.mouse.get_pos()):
-            current_button_color = (245, 189, 73)
+            current_button_color = (224, 169, 58)
         else:
-            current_button_color = (248, 246, 246)
+            current_button_color = (245, 189, 73)
 
         desenhar_botao(TELA, "Nivel Extra", nivel_extra_button_rect, current_button_color)
 

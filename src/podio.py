@@ -1,9 +1,12 @@
 import pygame
 import sys
-from save import *
+from save import read_all_users
+from tela_inicial import main  # Importar o main da tela inicial no início do arquivo
+
 # Inicializa o Pygame
 pygame.init()
 
+LARGURA_JANELA, ALTURA_JANELA = 1200, 700
 # Configurações de tela
 screen_width = 1200
 screen_height = 700
@@ -24,11 +27,13 @@ header_font = pygame.font.SysFont('Arial', 40)
 default_font = pygame.font.SysFont('Arial', 30)
 highlight_font = pygame.font.SysFont('Arial', 35)
 
-#botao
-botao_retornar_rect = pygame.Rect(50, 50, 200, 100)
+# Cores dos botões
+cor_botao_normal = (11, 32, 39)
+cor_botao_hover = (7, 19, 24)
 
-# Dados dos jogadores (exemplo)
+fonte_botao = pygame.font.Font('assets/ARCADE_N.TTF', 30)
 
+cor_texto_normal = (217, 220, 214)  # Branco
 
 # Função para desenhar o texto centralizado
 def draw_text(text, font, color, surface, x, y):
@@ -36,11 +41,19 @@ def draw_text(text, font, color, surface, x, y):
     textrect = textobj.get_rect(center=(x, y))
     surface.blit(textobj, textrect)
 
+def desenhar_botao(tela, texto, posicao, hover=False):
+    largura_botao = 50
+    altura_botao = 50
+    cor_botao = cor_botao_hover if hover else cor_botao_normal
+    botao_rect = pygame.Rect(0, 0, largura_botao, altura_botao)
+    botao_rect.center = posicao
+    pygame.draw.rect(tela, cor_botao, botao_rect, border_radius=10)
+    texto_renderizado = fonte_botao.render(texto, True, cor_texto_normal)
+    texto_rect = texto_renderizado.get_rect(center=botao_rect.center)
+    tela.blit(texto_renderizado, texto_rect)
+    return botao_rect
 
-
-# Loop principal
 def classificacao():
-
     players_scores = read_all_users()
     print("podio",players_scores)
 
@@ -48,12 +61,8 @@ def classificacao():
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if botao_retornar_rect.collidepoint(event.pos):
-                    from tela_inicial import main
-                    main()
-                    break
+                pygame.quit()
+                sys.exit()
 
         # Fundo branco
         screen.fill(white)
@@ -64,22 +73,16 @@ def classificacao():
         # Ordenar jogadores por pontuação (decrescente)
         sorted_players = sorted(players_scores.items(), key=lambda item: item[1], reverse=True)
 
-
         #hover no botao
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        if botao_retornar_rect.collidepoint(mouse_x, mouse_y):
-            pygame.draw.rect(screen, laranja, botao_retornar_rect, 2)
-            cor_botao_retornar = laranja
-            
-        else:
-            pygame.draw.rect(screen, black, botao_retornar_rect, 1)
-            cor_botao_retornar =  black
-                #desenhar botao de retornar
+        botao_voltar = desenhar_botao(screen, 'X', (100, ALTURA_JANELA // 8 // 2), hover=False)
+        if botao_voltar.collidepoint(mouse_x, mouse_y):
+            botao_voltar = desenhar_botao(screen, 'X', (100, ALTURA_JANELA // 8 // 2), hover=True)
+            if pygame.mouse.get_pressed()[0]:
+                running = False
+                main()
 
-        pygame.draw.rect(screen, white, botao_retornar_rect)
-        txt_surface = default_font.render('Retornar', True, cor_botao_retornar)
-        screen.blit(txt_surface, (botao_retornar_rect.x + (botao_retornar_rect.width - txt_surface.get_width()) // 2, botao_retornar_rect.y + (botao_retornar_rect.height - txt_surface.get_height()) // 2))
-
+       # pygame.draw.rect(screen, white, botao_retornar_rect)
 
         # Desenhar a tabela de classificação
         y_offset = 150
@@ -96,5 +99,6 @@ def classificacao():
 
         # Atualizar a tela
         pygame.display.flip()
+
 
 
