@@ -343,7 +343,11 @@ class Level:
         save_user(user["nome"],None,None,None,None,None,None,None,None,None,None,user["ultimo_nivel"],user["pontuacao"])
 
         from carregar_jogo import carregar_jogo
-        carregar_jogo(self.jogador.nome)
+        if self.nome == "nivel_0":
+            from main import main
+            main()
+        else:
+            carregar_jogo(self.jogador.nome)
 
     def perdeu(self):
         """
@@ -361,7 +365,11 @@ class Level:
                   user["nivel_6"],user["nivel_7"],user["nivel_8"],user["nivel_9"],user["nivel_10"],user["ultimo_nivel"],user["pontuacao"])
         
         from carregar_jogo import carregar_jogo
-        carregar_jogo(self.jogador.nome)
+        if self.nome == "nivel_0":
+            from main import main
+            main()
+        else:
+            carregar_jogo(self.jogador.nome)
 
 
     def popup_insuficiente(self):

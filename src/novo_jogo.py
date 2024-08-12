@@ -3,6 +3,7 @@ import pygame.freetype
 import os
 from save import *
 from carregar_jogo import carregar_jogo
+from nivel_extra import nivel_extra
 
 caminho_fonte = 'assets/ARCADE_N.TTF'
 
@@ -125,7 +126,7 @@ button_rect = pygame.Rect(550, 350, 100, 40)
 button_color = GRAY
 
 # Função principal
-def novo_jogo():
+def novo_jogo(modo : str = "historia"):
     """
     Função principal que inicializa e executa o loop do jogo.
     """
@@ -143,8 +144,10 @@ def novo_jogo():
 
                     if not read_user(input_box.text):
                         save_user(input_box.text, None, None, None, None, None, None, None, None, None, None, 1, 0)
-
-                    carregar_jogo(input_box.text)
+                    if modo == "historia":
+                        carregar_jogo(input_box.text)
+                    else:
+                        nivel_extra(input_box.text)
 
         # Efeito de hover no botão
         if button_rect.collidepoint(pygame.mouse.get_pos()):

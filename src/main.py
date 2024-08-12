@@ -1,7 +1,5 @@
 import pygame
 import cv2
-import os
-from novo_jogo import novo_jogo
 from informacoes import informacoes
 # Inicialização do Pygame
 pygame.init()
@@ -72,8 +70,9 @@ def desenhar_botao(texto, posicao, hover=False):
     return botao_rect
 
 # Funções de callback para os botões
-def abrir_novo_jogo():
-    novo_jogo()
+def modo():
+    from selecao_modo import selecao_de_modo
+    selecao_de_modo()
 
 def podio():
     from podio import classificacao
@@ -115,17 +114,17 @@ def main():
         # Verificar hover e desenhar botões do menu com a cor adequada
         mouse_x, mouse_y = pygame.mouse.get_pos()
         
-        posicao_opcao_novo_jogo = (LARGURA_JANELA // 2, ALTURA_JANELA * 3 // 4 - altura_botao - margem_entre_botoes)
+        posicao_opcao_selecao_de_modo = (LARGURA_JANELA // 2, ALTURA_JANELA * 3 // 4 - altura_botao - margem_entre_botoes)
         posicao_opcao_podio = (LARGURA_JANELA // 2, ALTURA_JANELA * 3 // 4)
         posicao_opcao_informacoes = (LARGURA_JANELA // 2, ALTURA_JANELA * 3 // 4 + altura_botao + margem_entre_botoes)
         
-        botao_novo_jogo = desenhar_botao('Jogar', posicao_opcao_novo_jogo, hover=posicao_opcao_novo_jogo[0] - largura_botao // 2 <= mouse_x <= posicao_opcao_novo_jogo[0] + largura_botao // 2 and posicao_opcao_novo_jogo[1] - altura_botao // 2 <= mouse_y <= posicao_opcao_novo_jogo[1] + altura_botao // 2)
+        botao_selecao_de_modo = desenhar_botao('Jogar', posicao_opcao_selecao_de_modo, hover=posicao_opcao_selecao_de_modo[0] - largura_botao // 2 <= mouse_x <= posicao_opcao_selecao_de_modo[0] + largura_botao // 2 and posicao_opcao_selecao_de_modo[1] - altura_botao // 2 <= mouse_y <= posicao_opcao_selecao_de_modo[1] + altura_botao // 2)
         botao_podio = desenhar_botao('Podio', posicao_opcao_podio, hover=posicao_opcao_podio[0] - largura_botao // 2 <= mouse_x <= posicao_opcao_podio[0] + largura_botao // 2 and posicao_opcao_podio[1] - altura_botao // 2 <= mouse_y <= posicao_opcao_podio[1] + altura_botao // 2)
         botao_informacoes = desenhar_botao('Informacoes', posicao_opcao_informacoes, hover=posicao_opcao_informacoes[0] - largura_botao // 2 <= mouse_x <= posicao_opcao_informacoes[0] + largura_botao // 2 and posicao_opcao_informacoes[1] - altura_botao // 2 <= mouse_y <= posicao_opcao_informacoes[1] + altura_botao // 2)
 
         # Verificar cliques nos botões
-        if botao_novo_jogo.collidepoint(mouse_x, mouse_y) and pygame.mouse.get_pressed()[0]:
-            abrir_novo_jogo()
+        if botao_selecao_de_modo.collidepoint(mouse_x, mouse_y) and pygame.mouse.get_pressed()[0]:
+            modo()
             rodando = False  # Fecha o menu principal ao abrir o novo jogo
 
         if botao_podio.collidepoint(mouse_x, mouse_y) and pygame.mouse.get_pressed()[0]:

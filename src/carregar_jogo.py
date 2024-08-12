@@ -155,7 +155,7 @@ def carregar_jogo(nome_usuario):
                     from main import main
                     main()
                 if nivel_extra_button_rect.collidepoint(evento.pos):
-                    nivel_extra(nome_usuario,usuario)
+                    nivel_extra(nome_usuario)
 
         desenhar_tela(nome_usuario)
 

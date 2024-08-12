@@ -3,7 +3,7 @@ from level import Level
 from random import randint
 
 
-def nivel_extra(nome_usuario,usuario):
+def nivel_extra(nome_usuario):
 
     maze_x = ((randint(18,54)) //2) * 2 + 1
     maze_y = ((randint(18,54)) //2) * 2 + 1

@@ -1,5 +1,3 @@
-#a ideia era ter um nivel aleatorio mas nao deu tempo
-
 from random import choice,randint
 
 def generate_maze(pos, maze, visited= None):
@@ -85,19 +83,3 @@ def create_maze(size_x,size_y,start = None,exit = None) -> list:
     maze[exit[0]][exit[1]] = 3
 
     return maze
-
-
-#testagem
-def print_maze(maze):
-    for i in range(len(maze)):
-        for j in range(len(maze[i])):
-            if maze[i][j] == 1:
-                print("#", end= " ")
-            elif maze[i][j] == 2:
-                print("E", end= " ")
-            elif maze[i][j] == 3:
-                print("S", end= " ")
-            else:
-                print(" ", end= " ")
-
-        print()
