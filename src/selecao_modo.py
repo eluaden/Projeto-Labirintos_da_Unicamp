@@ -1,5 +1,12 @@
 import pygame
 from novo_jogo import novo_jogo
+import os
+
+# Defina a posição inicial da janela
+POS_X, POS_Y = 100, 50  # Exemplo de posição (100 pixels à direita, 50 pixels abaixo do canto superior esquerdo)
+
+# Definir a posição da janela (por exemplo, x=100, y=50)
+os.environ['SDL_VIDEO_WINDOW_POS'] = f"{POS_X},{POS_Y}"
 
 # Inicialização do Pygame
 pygame.init()
@@ -7,8 +14,7 @@ pygame.init()
 # Defina as dimensões da janela
 LARGURA_JANELA, ALTURA_JANELA = 1200, 700
 
-# Defina a posição inicial da janela
-POS_X, POS_Y = 100, 50  # Exemplo de posição (100 pixels à direita, 50 pixels abaixo do canto superior esquerdo)
+
 
 # Crie a tela do Pygame com posição inicial definida
 TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA), 0, 32)
