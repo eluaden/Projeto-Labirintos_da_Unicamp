@@ -172,8 +172,6 @@ def carregar_jogo(nome_usuario):
         else:
             current_button_color = (245, 189, 73)
 
-        desenhar_botao(TELA, "Nivel Extra", nivel_extra_button_rect, current_button_color)
-
         pygame.display.flip()
 
     # Finaliza o Pygame

@@ -1,45 +1,82 @@
 import pygame.sprite
 
 class Jogador(pygame.sprite.Sprite):
-    def __init__(self, nome: str, nota: int, pontos_total: int, labirinto_atual, posicao_atual: list, tempo_restante:int):
+    
+    def __init__(self, nome: str, nota: int, pontos_total: int, labirinto_atual, posicao_atual: list, tempo_restante: int):
+        super().__init__()
         self._nome = nome
         self._nota = nota
         self._pontos_total = pontos_total
-        self._inventario = {"bombas":[]}
+        self._inventario = {"bombas": []}
         self._labirinto_atual = labirinto_atual
         self._posicao_atual = posicao_atual.copy()
         self._tempo_restante = tempo_restante
 
-        # Carregue as imagens para a animação do jogador
-        self.imagens = [
-            pygame.image.load('assets/attack_1.png').convert_alpha(),
-            pygame.image.load('assets/attack_2.png').convert_alpha(),
-            pygame.image.load('assets/attack_3.png').convert_alpha(),
-            pygame.image.load('assets/attack_4.png').convert_alpha(),
-            pygame.image.load('assets/attack_5.png').convert_alpha(),
-            pygame.image.load('assets/attack_6.png').convert_alpha(),
-            pygame.image.load('assets/attack_7.png').convert_alpha(),
-            pygame.image.load('assets/attack_8.png').convert_alpha(),
-            pygame.image.load('assets/attack_9.png').convert_alpha(),
-            
-            # Adicione mais imagens conforme necessário para a animação
-        ]
-        
-        self.image_index = 0  # Índice atual da imagem de animação
-        self.image = self.imagens[self.image_index]  # Imagem atual do jogador
-        
+        # Carregar o sprite sheet
+        sprite_sheet = pygame.image.load('assets/teste7.png').convert_alpha()
+
+        # Configurações de sprites
+        self.SPRITE_WIDTH = sprite_sheet.get_width() // 3
+        self.SPRITE_HEIGHT = sprite_sheet.get_height() // 4
+
+        # Função para dividir o sprite sheet
+        def load_sprites(sheet, num_frames, row):
+            sprites = []
+            for i in range(num_frames):
+                frame = sheet.subsurface(pygame.Rect(i * self.SPRITE_WIDTH, row * self.SPRITE_HEIGHT, self.SPRITE_WIDTH, self.SPRITE_HEIGHT))
+                sprites.append(frame)
+            return sprites
+
+        # Carregar os sprites para cada direção
+        self.sprites_up = load_sprites(sprite_sheet, 3, 3)
+        self.sprites_left = load_sprites(sprite_sheet, 3, 1)
+        self.sprites_right = load_sprites(sprite_sheet, 3, 2)
+        self.sprites_down = load_sprites(sprite_sheet, 3, 0)
+
+        # Dicionário para armazenar as listas de sprites
+        self.sprites = {
+            'cima': self.sprites_up,
+            'esquerda': self.sprites_left,
+            'direita': self.sprites_right,
+            'baixo': self.sprites_down
+        }
+
+        # Configurações iniciais
+        self.direcao = 'baixo'
+        self.animacao_index = 0
+        self.image = self.sprites[self.direcao][self.animacao_index]
         self.rect = self.image.get_rect()
-        self.rect.topleft = (posicao_atual[0]*20, posicao_atual[1]*20)
-        
-    def update(self):
-        # Atualize a imagem do jogador para a próxima na animação
-        self.image_index += 0.25
-        if self.image_index >= len(self.imagens):
-            self.image_index = 0
-        self.image = self.imagens[int(self.image_index)]
-        
-        # Atualize a posição do retângulo do jogador
-        self.rect.topleft = (self.posicao_atual[0]*40, self.posicao_atual[1]*40)  # Ajuste conforme necessário
+        self.rect.topleft = (self._posicao_atual[0] * 40, self._posicao_atual[1] * 40)
+        self.velocidade = 40  # Ajuste conforme a necessidade
+
+
+    def mover(self, direcao):
+        self.direcao = direcao
+        x, y = self.posicao_atual
+
+        # Determina a nova posição de destino com base na direção
+        if direcao == 'esquerda':
+            nova_posicao = [x - 1, y]
+        elif direcao == 'direita':
+            nova_posicao = [x + 1, y]
+        elif direcao == 'cima':
+            nova_posicao = [x, y - 1]
+        elif direcao == 'baixo':
+            nova_posicao = [x, y + 1]
+
+        nova_pos_x, nova_pos_y = nova_posicao
+
+        # Verifica se a nova posição está dentro dos limites do labirinto e não colide com uma parede
+        if 0 <= nova_pos_x < len(self.labirinto_atual[0]) and 0 <= nova_pos_y < len(self.labirinto_atual):
+            if self.labirinto_atual[nova_pos_y][nova_pos_x] != 1:
+                # Atualiza a posição do jogador
+                self.posicao_atual = nova_posicao
+
+        print(self.direcao)
+        # Atualiza a animação do sprite
+        self.animacao_index = (self.animacao_index + 1) % len(self.sprites[self.direcao])
+        self.image = self.sprites[self.direcao][self.animacao_index]
+
            
     @property
     def nome(self):
@@ -97,7 +134,7 @@ class Jogador(pygame.sprite.Sprite):
     def tempo_restante(self, value):
         self._tempo_restante = value    
         
-        
+    """
     def mover(self, direcao):
         x, y = self.posicao_atual
         nova_posicao = [x, y]
@@ -114,7 +151,7 @@ class Jogador(pygame.sprite.Sprite):
         # Verificar se a nova posição é válida no labirinto
         if self.labirinto_atual[nova_posicao[1]][nova_posicao[0]] != 1:
             self.posicao_atual = nova_posicao
-                
+    """             
                 
     def aumentar_vida(self):
         if self.nota < 10:

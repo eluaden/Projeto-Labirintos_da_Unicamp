@@ -12,7 +12,7 @@ pygame.init()
 LARGURA_JANELA, ALTURA_JANELA = 1200, 700  # Ajustado para as novas dimensões da tela
 TELA = pygame.display.set_mode((LARGURA_JANELA, ALTURA_JANELA))
 pygame.display.set_caption('Os Labirintos da Unicamp')
-FPS = 30
+FPS = 40
 
 # Cores
 PRETO = (0, 0, 0)
@@ -51,6 +51,22 @@ class Level:
         # Ajuste para a câmera
         self.camera_x = 0
         self.camera_y = 0
+        
+        self.teclas_pressionadas = {
+            pygame.K_LEFT: False,
+            pygame.K_RIGHT: False,
+            pygame.K_UP: False,
+            pygame.K_DOWN: False
+        }
+        
+        self.movimento_clock = pygame.time.Clock()
+        self.movimento_fps = 7  # FPS mais baixo para a movimentação do jogador
+        
+        self.tempo_ultimo_movimento = pygame.time.get_ticks()
+        
+        self.teclas_pressionadas = {pygame.K_LEFT: False, pygame.K_RIGHT: False, pygame.K_UP: False, pygame.K_DOWN: False}
+
+
 
     def gerar_itens_aleatorios(self, n_bomb, n_rel, n_liv):
         """Gera itens aleatórios no labirinto"""
@@ -114,10 +130,9 @@ class Level:
 
     def desenhar_jogador(self):
         """Desenha o jogador na tela"""
-        jogador_img = pygame.image.load('assets/jogador.png')
+        x, y = self.jogador._posicao_atual
+        TELA.blit(self.jogador.image, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
 
-        x, y = self.jogador.posicao_atual
-        TELA.blit(jogador_img, ((x * TAMANHO_CELULA) - self.camera_x, INFO_HEIGHT + (y * TAMANHO_CELULA) - self.camera_y))
 
     def desenhar_inimigos(self):
         """Desenha os inimigos na tela"""
@@ -178,6 +193,8 @@ class Level:
 
         # Escolha aleatória da posição da resposta errada
         resposta_posicao = random.choice([True, False])
+        
+        self.teclas_pressionadas = {pygame.K_LEFT: False, pygame.K_RIGHT: False, pygame.K_UP: False, pygame.K_DOWN: False}
 
         while True:
             for evento in pygame.event.get():
@@ -260,19 +277,18 @@ class Level:
         """Função para a atualização do tempo restante do usuário"""
         agora = pygame.time.get_ticks()
         if agora - self.ultimo_tempo >= 1000:
-            self.jogador.tempo_restante -= 1
+            self.jogador._tempo_restante -= 1
             self.ultimo_tempo = agora
-            print(f"Nota: {self.jogador.nota}, Tempo: {self.jogador.tempo_restante}")
+            print(f"Nota: {self.jogador._nota}, Tempo: {self.jogador._tempo_restante}")
 
             for professor in self.professores:
                 professor.wander(self.labirinto)
 
-            if self.jogador.tempo_restante <= 0:
+            if self.jogador._tempo_restante <= 0:
                 self.popup_final(False)
                 self.perdeu()
                 pygame.quit()
                 quit()
-
 
     def popup_final(self, vitoria):
         """Função para o popup final do jogo, com a mensagem de vitória ou derrota (se passou ou reprovou)"""
@@ -442,6 +458,19 @@ class Level:
                     self.jogador.tempo_restante -= 3
 
 
+    
+    def movimentar_jogador(self):
+        if self.teclas_pressionadas[pygame.K_LEFT]:
+            self.jogador.mover('esquerda')
+        if self.teclas_pressionadas[pygame.K_RIGHT]:
+            self.jogador.mover('direita')
+        if self.teclas_pressionadas[pygame.K_UP]:
+            self.jogador.mover('cima')
+        if self.teclas_pressionadas[pygame.K_DOWN]:
+            self.jogador.mover('baixo')
+
+
+            
     def jogar(self):
         """Função principal do jogo"""
         rodando = True
@@ -450,33 +479,44 @@ class Level:
                 if evento.type == pygame.QUIT:
                     rodando = False
                 elif evento.type == pygame.KEYDOWN:
-                    if evento.key == pygame.K_LEFT:
-                        self.jogador.mover('esquerda')
-                    elif evento.key == pygame.K_RIGHT:
-                        self.jogador.mover('direita')
-                    elif evento.key == pygame.K_UP:
-                        self.jogador.mover('cima')
-                    elif evento.key == pygame.K_DOWN:
-                        self.jogador.mover('baixo')
-                    elif evento.key == pygame.K_SPACE and len(self.jogador.inventario["bombas"]) > 0:
-                        bomba = self.jogador.inventario["bombas"].pop()
+                    if evento.key in self.teclas_pressionadas:
+                        self.teclas_pressionadas[evento.key] = True
+                    if evento.key == pygame.K_SPACE and len(self.jogador._inventario["bombas"]) > 0:
+                        bomba = self.jogador._inventario["bombas"].pop()
                         bomba.special_action(self.jogador)
+                elif evento.type == pygame.KEYUP:
+                    if evento.key in self.teclas_pressionadas:
+                        self.teclas_pressionadas[evento.key] = False
 
+            # Verifica o tempo decorrido para atualizar o movimento
+            tempo_atual = pygame.time.get_ticks()
+            if tempo_atual - self.tempo_ultimo_movimento > (1000 / self.movimento_fps):
+                self.tempo_ultimo_movimento = tempo_atual
+                # Atualiza o movimento do jogador baseado nas teclas pressionadas
+                self.movimentar_jogador()
+
+            # Atualiza o resto do jogo
+            self.jogador.update()
             self.atualizacao_por_segundo()
             self.verificar_colisoes()
             self.atualizar_camera()
 
+            # Desenha na tela
             TELA.fill(PRETO)
             self.desenhar_labirinto()
             self.desenhar_inimigos()
             self.desenhar_itens()
             self.desenhar_informacoes()
-            self.desenhar_jogador()
+            self.desenhar_jogador()  # Certifique-se de que isso acontece após mover o jogador
 
             pygame.display.flip()
-            self.clock.tick(FPS)
+            self.clock.tick(FPS)  # FPS principal do jogo
 
         pygame.quit()
+
+
+
+
 
 
 
